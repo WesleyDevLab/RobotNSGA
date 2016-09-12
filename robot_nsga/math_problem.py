@@ -10,3 +10,4 @@ def main(args):
 	database.create_population()
 	database.save([b'abc', b'def', b'ghi'])
 	print(database.properties)
+	print(database.load())

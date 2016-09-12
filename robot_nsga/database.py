@@ -52,6 +52,16 @@ class Database:
 		self._set_property('highest_population', self.properties['highest_population'] + 1)
 		self.select()
 
+	def load(self):
+		'''Returns a list of all elements in the selected population as binary strings'''
+		with open(os.path.join(self.directory, POPULATION_PREFIX + str(self.selected)), 'rb') as in_file:
+			elements = []
+			bstring = in_file.read(self.properties['binary_length'])
+			while len(bstring) == self.properties['binary_length']:
+				elements.append(bstring)
+				bstring = in_file.read(self.properties['binary_length'])
+		return elements
+
 	def save(self, elements):
 		'''Saves the given list of elements to the selected population file
 
