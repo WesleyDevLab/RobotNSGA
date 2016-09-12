@@ -5,3 +5,5 @@ from database import Database
 
 def main(args):
 	database = Database('MathDatabase')
+	database._save_properties()
+	print(database._load_properties())
