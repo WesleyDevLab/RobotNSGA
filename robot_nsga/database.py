@@ -36,6 +36,11 @@ class Database:
 		self.properties = {}
 		self.properties['binary_length'] = 0
 		self.properties['highest_population'] = 0
+		self._save_properties()
+
+	def _set_property(self, key, value):
+		self.properties[key] = value
+		self._save_properties()
 
 	def _load_properties(self):
 		'''Loads the database properties stored in the PROPERTIES_FILE'''
@@ -44,8 +49,22 @@ class Database:
 
 	def create_population(self):
 		'''Creates a new population after the last one and sets it as selected'''
-		self.properties['highest_population'] += 1
+		self._set_property('highest_population', self.properties['highest_population'] + 1)
 		self.select()
+
+	def save(self, elements):
+		'''Saves the given list of elements to the selected population file
+
+		This operation overwrites any previous data in the file. All the elements in the list must be
+		binary strings of the same length.
+		'''
+		self._set_property('binary_length', len(elements[0]))
+		with open(os.path.join(self.directory, POPULATION_PREFIX + str(self.selected)), 'wb') as out_file:
+			for row in elements:
+				if len(row) != self.properties['binary_length']:
+					raise RuntimeError('Attempting to save elements of different length.')
+				else:
+					out_file.write(row)
 
 	def select(self, index=-1):
 		'''Sets the given population as the one to load from and save to

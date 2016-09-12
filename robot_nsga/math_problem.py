@@ -8,3 +8,5 @@ def main(args):
 	database = Database('MathDatabase')
 	print(database.properties)
 	database.create_population()
+	database.save([b'abc', b'def', b'ghi'])
+	print(database.properties)
