@@ -4,6 +4,7 @@ import os
 import json
 
 
+POPULATION_PREFIX = 'P'
 PROPERTIES_FILE = 'Properties.json'
 
 
@@ -19,13 +20,20 @@ class Database:
 		self.properties = {}
 		if not os.path.exists(self.directory):
 			os.mkdir(self.directory)
+			self._set_defaults()
+			self._save_properties()
 		else:
 			self._load_properties()
 
 	def _save_properties(self):
 		'''Saves the database properties to the PROPERTIES_FILE'''
 		with open(os.path.join(self.directory, PROPERTIES_FILE), 'wt') as out_file:
-			json.dump(self.properties, out_file, indent='\t')
+			json.dump(self.properties, out_file, indent='\t', sort_keys=True)
+
+	def _set_defaults(self):
+		'''Sets the default properties for the database'''
+		self.properties = {}
+		self.properties['binary_length'] = 0
 
 	def _load_properties(self):
 		'''Loads the database properties stored in the PROPERTIES_FILE'''
