@@ -13,3 +13,5 @@ def main(args):
 	theano.printing.debugprint(nn.output)
 	nn.add_layer(neuralnet.FullyConnectedLayer(3, 2, T.nnet.sigmoid))
 	theano.printing.debugprint(nn.output)
+	nn.compile()
+	print(nn.predict([[-1], [0], [1]]))

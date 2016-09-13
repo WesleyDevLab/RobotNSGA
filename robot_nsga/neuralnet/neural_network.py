@@ -22,3 +22,6 @@ class NeuralNetwork:
 	def compile(self):
 		'''Make the neural network evaluatable'''
 		self.function = theano.function([self.input], self.output)
+
+	def predict(self, input_value):
+		return self.function(input_value)
