@@ -24,4 +24,8 @@ class NeuralNetwork:
 		self.function = theano.function([self.input], self.output)
 
 	def predict(self, input_value):
+		'''Compute the output of the network to the given input
+
+		The 'compile' method must be called before this one.
+		'''
 		return self.function(input_value)
