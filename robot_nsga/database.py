@@ -4,7 +4,7 @@ import os
 import json
 
 
-POPULATION_PREFIX = 'Population'
+POPULATION_PREFIX = 'data'
 PROPERTIES_FILE = 'Properties.json'
 
 

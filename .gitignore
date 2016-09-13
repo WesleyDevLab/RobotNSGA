@@ -4,4 +4,4 @@ __pycache__/
 
 # Test files
 *.json
-Population*
+data*
