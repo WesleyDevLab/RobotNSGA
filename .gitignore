@@ -5,3 +5,4 @@ __pycache__/
 # Test files
 *.json
 data/
+reports/
