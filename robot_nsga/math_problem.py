@@ -1,13 +1,15 @@
 '''Evolution of a neural network to perform simple math functions.'''
 
-from database import Database
+import theano.tensor as T
+import theano.printing
+
+import neuralnet
 
 
 def main(args):
 	'''Module main method'''
-	database = Database('MathDatabase')
-	print(database.properties)
-	database.create_population()
-	database.save([b'abc', b'def', b'ghi'])
-	print(database.properties)
-	print(database.load())
+	nn = neuralnet.NeuralNetwork()
+	nn.add_layer(neuralnet.FullyConnectedLayer(3, 3, T.nnet.sigmoid))
+	theano.printing.debugprint(nn.output)
+	nn.add_layer(neuralnet.FullyConnectedLayer(3, 2, T.nnet.sigmoid))
+	theano.printing.debugprint(nn.output)
