@@ -4,7 +4,7 @@ import os
 import json
 
 
-POPULATION_PREFIX = 'data'
+DATA_DIRECTORY = 'data'
 PROPERTIES_FILE = 'Properties.json'
 
 
@@ -54,7 +54,8 @@ class Database:
 
 	def load(self):
 		'''Returns a list of all elements in the selected population as binary strings'''
-		with open(os.path.join(self.directory, POPULATION_PREFIX + str(self.selected)), 'rb') as in_file:
+		path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
+		with open(path, 'rb') as in_file:
 			elements = []
 			bstring = in_file.read(self.properties['binary_length'])
 			while len(bstring) == self.properties['binary_length']:
@@ -69,7 +70,8 @@ class Database:
 		binary strings of the same length.
 		'''
 		self._set_property('binary_length', len(elements[0]))
-		with open(os.path.join(self.directory, POPULATION_PREFIX + str(self.selected)), 'wb') as out_file:
+		path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
+		with open(path, 'wb') as out_file:
 			for row in elements:
 				if len(row) != self.properties['binary_length']:
 					raise RuntimeError('Attempting to save elements of different length.')
