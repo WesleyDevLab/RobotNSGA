@@ -13,11 +13,13 @@ class NeuralNetwork:
 		self.input = T.dmatrix('x')
 		self.output = self.input
 		self.function = None
+		self.size = 0
 
 	def add_layer(self, new_layer):
 		'''Adds the given layer to the network'''
 		self.layers.append(new_layer)
 		self.output = theano.clone(new_layer.output, replace={new_layer.input: self.output})
+		self.size += new_layer.size
 
 	def compile(self):
 		'''Make the neural network evaluatable'''
