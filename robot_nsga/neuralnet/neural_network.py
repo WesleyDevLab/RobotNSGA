@@ -29,3 +29,16 @@ class NeuralNetwork:
 		The 'compile' method must be called before this one.
 		'''
 		return self.function(input_value)
+
+	def set_params(self, unrolled_weights):
+		'''Replaces the network's weigths with the first elements of the given list
+
+		Returns the number of elements used.
+		'''
+		params_vector = unrolled_weights
+		total_used = 0
+		for layer in self.layers:
+			used = layer.set_params(unrolled_weights)
+			params_vector = params_vector[used :]
+			total_used += used
+		return total_used
