@@ -6,6 +6,7 @@ import json
 
 DATA_DIRECTORY = 'data'
 PROPERTIES_FILE = 'Properties.json'
+REPORT_DIRECTORY = 'reports'
 
 
 class Database:
@@ -25,6 +26,10 @@ class Database:
 			self._save_properties()
 		else:
 			self._load_properties()
+		if not os.path.exists(os.path.join(self.directory, DATA_DIRECTORY)):
+			os.mkdir(os.path.join(self.directory, DATA_DIRECTORY))
+		if not os.path.exists(os.path.join(self.directory, REPORT_DIRECTORY)):
+			os.mkdir(os.path.join(self.directory, REPORT_DIRECTORY))
 
 	def _save_properties(self):
 		'''Saves the database properties to the PROPERTIES_FILE'''
