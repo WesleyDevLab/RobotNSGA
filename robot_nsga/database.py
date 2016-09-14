@@ -5,6 +5,7 @@ import json
 
 
 DATA_DIRECTORY = 'data'
+ID_PREFIX = 'id_'
 PROPERTIES_FILE = 'Properties.json'
 REPORT_DIRECTORY = 'reports'
 
@@ -58,30 +59,29 @@ class Database:
 		self.select()
 
 	def load(self):
-		'''Returns a list of all elements in the selected population as binary strings'''
-		path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
-		with open(path, 'rb') as in_file:
-			elements = []
-			bstring = in_file.read(self.properties['binary_length'])
-			while len(bstring) == self.properties['binary_length']:
-				elements.append(bstring)
-				bstring = in_file.read(self.properties['binary_length'])
+		'''Returns a dictionary of all elements in the selected population as binary strings'''
+		id_path = os.path.join(self.directory, ID_PREFIX + str(self.selected))
+		data_path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
+		elements = {}
+		with open(id_path, 'rt') as id_file, open(data_path, 'rb') as data_file:
+			for key in id_file:
+				elements[key] = data_file.read(self.properties['binary_length'])
 		return elements
 
 	def save(self, elements):
-		'''Saves the given list of elements to the selected population file
+		'''Saves the given dictionary of elements to the selected population file
 
 		This operation overwrites any previous data in the file. All the elements in the list must be
 		binary strings of the same length.
 		'''
-		self._set_property('binary_length', len(elements[0]))
-		path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
-		with open(path, 'wb') as out_file:
-			for row in elements:
-				if len(row) != self.properties['binary_length']:
-					raise RuntimeError('Attempting to save elements of different length.')
-				else:
-					out_file.write(row)
+		id_path = os.path.join(self.directory, ID_PREFIX + str(self.selected))
+		data_path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
+		with open(id_path, 'wt') as id_file, open(data_path, 'wb') as data_file:
+			for key, value in elements.items():
+				self.properties['binary_length'] = len(value)
+				id_file.write(key + '\n')
+				data_file.write(value)
+		self._save_properties()
 
 	def select(self, index=-1):
 		'''Sets the given population as the one to load from and save to
