@@ -1,5 +1,7 @@
 '''Evolution of a neural network to perform simple math functions.'''
 
+import random
+
 import numpy
 
 import evolution
@@ -34,7 +36,7 @@ class MathProblem(evolution.Problem):
 		new_population = evolution.Population()
 		for i in range(size):
 			name = 'I' + str(i)
-			chromosome = [numpy.random.normal(0, 1) for _ in range(self.n_params)]
+			chromosome = [random.gauss(0, 1) for _ in range(self.n_params)]
 			new_individual = evolution.Individual(chromosome)
 			new_population.individuals[name] = new_individual
 		return new_population
@@ -42,7 +44,7 @@ class MathProblem(evolution.Problem):
 
 def main(args):
 	'''Module main method'''
-	numpy.random.seed()
+	random.seed()
 	database = Database(args.database)
 	problem = MathProblem()
 	database.create_population()
