@@ -4,8 +4,10 @@ import os
 import json
 
 
-POPULATION_PREFIX = 'Population'
+DATA_DIRECTORY = 'data'
+ID_PREFIX = 'id_'
 PROPERTIES_FILE = 'Properties.json'
+REPORT_DIRECTORY = 'reports'
 
 
 class Database:
@@ -25,6 +27,10 @@ class Database:
 			self._save_properties()
 		else:
 			self._load_properties()
+		if not os.path.exists(os.path.join(self.directory, DATA_DIRECTORY)):
+			os.mkdir(os.path.join(self.directory, DATA_DIRECTORY))
+		if not os.path.exists(os.path.join(self.directory, REPORT_DIRECTORY)):
+			os.mkdir(os.path.join(self.directory, REPORT_DIRECTORY))
 
 	def _save_properties(self):
 		'''Saves the database properties to the PROPERTIES_FILE'''
@@ -53,28 +59,46 @@ class Database:
 		self.select()
 
 	def load(self):
-		'''Returns a list of all elements in the selected population as binary strings'''
-		with open(os.path.join(self.directory, POPULATION_PREFIX + str(self.selected)), 'rb') as in_file:
-			elements = []
-			bstring = in_file.read(self.properties['binary_length'])
-			while len(bstring) == self.properties['binary_length']:
-				elements.append(bstring)
-				bstring = in_file.read(self.properties['binary_length'])
+		'''Returns a dictionary of all elements in the selected population as binary strings'''
+		id_path = os.path.join(self.directory, ID_PREFIX + str(self.selected))
+		data_path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
+		elements = {}
+		with open(id_path, 'rt') as id_file, open(data_path, 'rb') as data_file:
+			for key in id_file:
+				elements[key] = data_file.read(self.properties['binary_length'])
 		return elements
 
+	def load_report(self):
+		'''Returns the report corresponding to the selected population'''
+		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected))
+		with open(path, 'rt') as in_file:
+			report = json.load(in_file)
+		return report
+
 	def save(self, elements):
-		'''Saves the given list of elements to the selected population file
+		'''Saves the given dictionary of elements to the selected population file
 
 		This operation overwrites any previous data in the file. All the elements in the list must be
 		binary strings of the same length.
 		'''
-		self._set_property('binary_length', len(elements[0]))
-		with open(os.path.join(self.directory, POPULATION_PREFIX + str(self.selected)), 'wb') as out_file:
-			for row in elements:
-				if len(row) != self.properties['binary_length']:
-					raise RuntimeError('Attempting to save elements of different length.')
-				else:
-					out_file.write(row)
+		id_path = os.path.join(self.directory, ID_PREFIX + str(self.selected))
+		data_path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
+		with open(id_path, 'wt') as id_file, open(data_path, 'wb') as data_file:
+			for key, value in elements.items():
+				self.properties['binary_length'] = len(value)
+				id_file.write(key + '\n')
+				data_file.write(value)
+		self._save_properties()
+
+	def save_report(self, report):
+		'''Saves the given report
+
+		The report must be a dictionary of dictionaries, where the keys are the identifiers of each of
+		the individuals.
+		'''
+		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected) + '.json')
+		with open(path, 'wt') as out_file:
+			json.dump(report, out_file)
 
 	def select(self, index=-1):
 		'''Sets the given population as the one to load from and save to
