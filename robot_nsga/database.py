@@ -68,6 +68,13 @@ class Database:
 				elements[key] = data_file.read(self.properties['binary_length'])
 		return elements
 
+	def load_report(self):
+		'''Returns the report corresponding to the selected population'''
+		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected))
+		with open(path, 'rt') as in_file:
+			report = json.load(in_file)
+		return report
+
 	def save(self, elements):
 		'''Saves the given dictionary of elements to the selected population file
 
@@ -82,6 +89,16 @@ class Database:
 				id_file.write(key + '\n')
 				data_file.write(value)
 		self._save_properties()
+
+	def save_report(self, report):
+		'''Saves the given report
+
+		The report must be a dictionary of dictionaries, where the keys are the identifiers of each of
+		the individuals.
+		'''
+		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected) + '.json')
+		with open(path, 'wt') as out_file:
+			json.dump(report, out_file)
 
 	def select(self, index=-1):
 		'''Sets the given population as the one to load from and save to
