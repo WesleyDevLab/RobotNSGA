@@ -6,4 +6,4 @@ class Population:
 
 	def __init__(self):
 		'''Creates an empty population'''
-		self.individuals = []
+		self.individuals = {}
