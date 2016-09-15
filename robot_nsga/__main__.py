@@ -8,13 +8,19 @@ import math_problem
 def main():
 	'''Application main function'''
 	global_parser = argparse.ArgumentParser()
-	global_parser.add_argument('-d', '--database', help='The directory to be used as database')
+	global_parser.add_argument('-d', '--database', help='the directory to be used as database')
 	subparsers = global_parser.add_subparsers(title='subcommands')
+
+	# Evolution super-parser
+	evolution_parser = argparse.ArgumentParser(add_help=False)
+	evolution_parser.add_argument('--reset', action='store_true', help='delete data and start from generation 1')
+	evolution_parser.add_argument('-s', '--size', type=int, help='population size')
 
 	# Math problem
 	math_parser = subparsers.add_parser('math',
 		description='Train neural networks to perform simple mathematical functions',
-		help='Execute the math test')
+		help='Execute the math test',
+		parents=[evolution_parser])
 	math_parser.set_defaults(
 		database='MathDatabase',
 		func=math_problem.main
