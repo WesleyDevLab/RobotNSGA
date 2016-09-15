@@ -20,7 +20,6 @@ class MathProblem(evolution.Problem):
 		self.n_params = 0
 		for i in range(len(ARCHITECTURE) - 1):
 			self.n_params += ARCHITECTURE[i] * ARCHITECTURE[i + 1] + ARCHITECTURE[i + 1]
-		print(self.n_params)
 
 	def _create_network(self, chromosome=None):
 		'''Creates a neural network for this problem'''
