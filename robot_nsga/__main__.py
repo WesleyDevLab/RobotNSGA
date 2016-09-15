@@ -13,7 +13,9 @@ def main():
 
 	# Evolution super-parser
 	evolution_parser = argparse.ArgumentParser(add_help=False)
-	evolution_parser.add_argument('--reset', action='store_true', help='delete data and start from generation 1')
+	evolution_parser.add_argument('--reset',
+		action='store_true',
+		help='delete data and start from generation 1')
 	evolution_parser.add_argument('-s', '--size', type=int, help='population size')
 
 	# Math problem
