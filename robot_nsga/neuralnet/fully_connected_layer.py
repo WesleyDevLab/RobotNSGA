@@ -16,13 +16,13 @@ class FullyConnectedLayer:
 		self.input = T.dmatrix('x')
 		self.n_in = n_in
 		self.n_out = n_out
-		self.weights = theano.shared(np.zeros((n_out, n_in)), name='w')
-		self.bias = theano.shared(np.zeros((n_out, 1)), name='b')
-		self.size = self.weights.get_value().size + self.bias.get_value.size
+		self.weights = theano.shared(np.zeros((n_in, n_out)), name='w')
+		self.bias = theano.shared(np.zeros((1, n_out)), name='b', broadcastable=[True, False])
+		self.size = self.weights.get_value().size + self.bias.get_value().size
 		if activation is None:
-			self.output = T.dot(self.weights, self.input) + self.bias
+			self.output = T.dot(self.input, self.weights) + self.bias
 		else:
-			self.output = activation(T.dot(self.weights, self.input) + self.bias)
+			self.output = activation(T.dot(self.input, self.weights) + self.bias)
 
 	def set_params(self, unrolled_weights):
 		'''Replaces the layer's weigths with the first elements of the given list
