@@ -42,9 +42,11 @@ class Database:
 		self.properties = {}
 		self.properties['binary_length'] = 0
 		self.properties['highest_population'] = 0
+		self.properties['population_size'] = 0
 		self._save_properties()
 
-	def _set_property(self, key, value):
+	def set_property(self, key, value):
+		'''Sets the given propery, saving it immediately'''
 		self.properties[key] = value
 		self._save_properties()
 
@@ -55,7 +57,7 @@ class Database:
 
 	def create_population(self):
 		'''Creates a new population after the last one and sets it as selected'''
-		self._set_property('highest_population', self.properties['highest_population'] + 1)
+		self.set_property('highest_population', self.properties['highest_population'] + 1)
 		self.select()
 
 	def load(self):
