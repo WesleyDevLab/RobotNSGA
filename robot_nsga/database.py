@@ -2,6 +2,7 @@
 
 import os
 import json
+import shutil
 
 
 DATA_DIRECTORY = 'data'
@@ -77,6 +78,13 @@ class Database:
 		with open(path, 'rt') as in_file:
 			report = json.load(in_file)
 		return report
+
+	def reset(self):
+		'''Deletes all data in the database and restores the properties to their default values'''
+		shutil.rmtree(self.directory)
+		os.mkdir(self.directory)
+		self._set_defaults()
+		self._save_properties()
 
 	def save(self, elements):
 		'''Saves the given dictionary of elements to the selected population file
