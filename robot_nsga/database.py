@@ -64,7 +64,8 @@ class Database:
 		data_path = os.path.join(self.directory, DATA_DIRECTORY, str(self.selected))
 		elements = {}
 		with open(id_path, 'rt') as id_file, open(data_path, 'rb') as data_file:
-			for key in id_file:
+			key_buffer = id_file.read().splitlines()
+			for key in key_buffer:
 				elements[key] = data_file.read(self.properties['binary_length'])
 		return elements
 
