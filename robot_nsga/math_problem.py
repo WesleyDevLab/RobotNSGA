@@ -49,6 +49,6 @@ def main(args):
 	problem = MathProblem()
 	database.create_population()
 	first_population = problem.generate_population(10)
-	to_save = {key: numpy.asarray(val.chromosome).tobytes() for key, val in first_population.individuals.items()}
+	to_save = {key: numpy.asarray(val.chromosome).tobytes() for key, val in first_population.items()}
 	database.save(to_save)
 	print(database.load())
