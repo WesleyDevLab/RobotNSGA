@@ -31,6 +31,6 @@ class FullyConnectedLayer:
 		'''
 		w_size = self.weights.get_value().size
 		b_size = self.bias.get_value().size
-		self.weights.set_value(np.reshape(unrolled_weights[: w_size], (self.n_out, self.n_in)))
-		self.bias.set_value(np.reshape(unrolled_weights[w_size : w_size + b_size], (self.n_out, 1)))
+		self.weights.set_value(np.reshape(unrolled_weights[: w_size], (self.n_in, self.n_out)))
+		self.bias.set_value(np.reshape(unrolled_weights[w_size : w_size + b_size], (1, self.n_out)))
 		return self.size
