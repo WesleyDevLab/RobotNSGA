@@ -8,3 +8,10 @@ class NSGA:
 		self.problem = problem
 		self.population = None
 		self.children = None
+
+	def iterate(self, n_iterations=1, callback=None):
+		'''Perform n iterations of the genetic algorithm
+
+		After each iteration, the provided callback function will be called.
+		'''
+		pass
