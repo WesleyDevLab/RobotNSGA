@@ -3,6 +3,8 @@
 import evolution
 import neuralnet
 
+from database import Database
+
 
 ARCHITECTURE = [2, 10, 10, 2]
 
@@ -28,4 +30,6 @@ class MathProblem(evolution.Problem):
 
 def main(args):
 	'''Module main method'''
-	pass
+	database = Database(args.database)
+	problem = MathProblem()
+	genetic_algorithm = evolution.NSGA(problem)
