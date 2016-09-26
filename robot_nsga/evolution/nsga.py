@@ -13,6 +13,18 @@ class NSGA:
 		self.children = None
 		self.pop_size = population_size
 
+	def _create_offspring(self):
+		'''Creates a population of children'''
+		pass
+
+	def _crowding_distance(self):
+		'''Assings each individual in the population its crowding distance'''
+		pass
+
+	def _nondominated_sort(self):
+		'''Evaluates and groups individuals into nondomination fronts'''
+		pass
+
 	def iterate(self):
 		'''Perform a single iteration of the genetic algorithm'''
 		if self.population is None:
@@ -21,3 +33,6 @@ class NSGA:
 				new_individual = self.problem.generate_individual()
 				new_individual.name = 'I' + str(i)
 				self.population.add(new_individual)
+			self._nondominated_sort()
+			self._crowding_distance()
+			self._create_offspring()
