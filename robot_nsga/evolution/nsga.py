@@ -23,7 +23,7 @@ class NSGA:
 
 	def _nondominated_sort(self):
 		'''Evaluates and groups individuals into nondomination fronts'''
-		self.problem.evaluate()
+		self.problem.evaluate(self.population)
 
 	def iterate(self):
 		'''Perform a single iteration of the genetic algorithm'''

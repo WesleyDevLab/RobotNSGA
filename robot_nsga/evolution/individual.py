@@ -8,3 +8,4 @@ class Individual:
 		'''Creates a basic individual, with no metadata'''
 		self.name = None
 		self.chromosome = chromosome
+		self.fitness = []

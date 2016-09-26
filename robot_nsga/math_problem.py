@@ -15,7 +15,7 @@ import utils
 from database import Database
 
 
-ARCHITECTURE = [2, 10, 10, 2]
+ARCHITECTURE = [1, 10, 10, 2]
 
 
 class MathProblem(evolution.Problem):
@@ -39,10 +39,18 @@ class MathProblem(evolution.Problem):
 		network.compile()
 		if chromosome is not None:
 			network.set_params(chromosome)
+		return network
 
 	def evaluate(self, population):
 		'''Tests each individual's performance in imitating the cos and sinc functions'''
-		pass
+		network = self._create_network()
+		i = 1
+		for individual in population:
+			print('\rEvaluating [' + str(i) + '/' + str(population.size()) + ']', end='', flush=True)
+			network.set_params(individual.chromosome)
+			output = network.predict(self.train_x)
+			individual.fitness = np.mean(np.square(np.array(output) - self.train_y), axis=0).tolist()
+			i += 1
 
 	def generate_individual(self):
 		'''Returns a new individual with a random chromosome'''
