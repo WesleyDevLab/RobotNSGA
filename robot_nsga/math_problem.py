@@ -1,7 +1,13 @@
 '''Evolution of a neural network to perform simple math functions.'''
 
+# pylint: disable = E1101
+
+import os
 import random
 import sys
+
+import pkg_resources
+import numpy as np
 
 import evolution
 import neuralnet
@@ -20,6 +26,10 @@ class MathProblem(evolution.Problem):
 		self.n_params = 0
 		for i in range(len(ARCHITECTURE) - 1):
 			self.n_params += ARCHITECTURE[i] * ARCHITECTURE[i + 1] + ARCHITECTURE[i + 1]
+		trainx_path = os.path.abspath(pkg_resources.resource_filename('resources.math', 'train_x.txt'))
+		trainy_path = os.path.abspath(pkg_resources.resource_filename('resources.math', 'train_y.txt'))
+		self.train_x = np.loadtxt(trainx_path, delimiter=',')[:, None]
+		self.train_y = np.loadtxt(trainy_path, delimiter=',').T
 
 	def _create_network(self, chromosome=None):
 		'''Creates a neural network for this problem'''
