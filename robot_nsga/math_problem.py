@@ -1,5 +1,7 @@
 '''Evolution of a neural network to perform simple math functions.'''
 
+import sys
+
 import evolution
 import neuralnet
 
@@ -32,6 +34,17 @@ def main(args):
 	'''Module main method'''
 	database = Database(args.database)
 	problem = MathProblem()
-	genetic_algorithm = evolution.NSGA(problem)
 
+	if args.reset:
+		database.reset()
+	if database.properties['highest_population'] == 0:
+		if args.size is None:
+			print('ERROR: Population size must be specified when starting a new run.')
+			sys.exit()
+		database.set_property('population_size', args.size)
+	else:
+		database.select()
+
+	population_size = database.properties['population_size']
+	genetic_algorithm = evolution.NSGA(problem, population_size)
 	genetic_algorithm.iterate(n_iterations=args.iterations)
