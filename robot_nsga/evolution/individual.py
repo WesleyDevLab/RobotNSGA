@@ -9,3 +9,18 @@ class Individual:
 		self.name = None
 		self.chromosome = chromosome
 		self.fitness = []
+		self.rank = 0
+		self.domination_count = 0
+		self.dominated_solutions = []
+
+	def dominates(self, other):
+		'''Returns true if this individual dominates the other one'''
+		better = False
+		for i in range(len(self.fitness)):
+			if self.fitness[i] > other.fitness[i]:
+				break
+			elif self.fitness[i] < other.fitness[i]:
+				better = True
+		else:
+			return better
+		return False
