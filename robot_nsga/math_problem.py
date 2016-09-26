@@ -46,7 +46,11 @@ def main(args):
 	else:
 		database.select()
 
+	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
-	genetic_algorithm.iterate(n_iterations=args.iterations,
-		callback=lambda: utils.save_data(genetic_algorithm, database))
+	for _ in range(args.iterations):
+		generation += 1
+		print('Starting generation ' + str(generation))
+		genetic_algorithm.iterate()
+		utils.save_data(genetic_algorithm, database)

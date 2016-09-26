@@ -11,13 +11,6 @@ class NSGA:
 		self.pop_size = population_size
 		self.generation = generation
 
-	def iterate(self, n_iterations=1, callback=None):
-		'''Perform n iterations of the genetic algorithm
-
-		After each iteration, the provided callback function will be called.
-		'''
-		for _ in range(n_iterations):
-			print('Starting generation ' + str(self.generation))
-			self.generation += 1
-			if callback is not None:
-				callback()
+	def iterate(self):
+		'''Perform a single iteration of the genetic algorithm'''
+		pass
