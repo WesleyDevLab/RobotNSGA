@@ -53,6 +53,7 @@ class MathProblem(evolution.Problem):
 			output = network.predict(self.train_x)
 			individual.fitness = np.mean(np.square(np.array(output) - self.train_y), axis=0).tolist()
 			i += 1
+		progress_bar = 0
 
 	def generate_individual(self):
 		'''Returns a new individual with a random chromosome'''
