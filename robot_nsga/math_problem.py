@@ -44,9 +44,11 @@ class MathProblem(evolution.Problem):
 	def evaluate(self, population):
 		'''Tests each individual's performance in imitating the cos and sinc functions'''
 		network = self._create_network()
+		print('Evaluating')
+		progress_bar = utils.ProgressBar()
 		i = 1
 		for individual in population:
-			print('\rEvaluating [' + str(i) + '/' + str(population.size()) + ']', end='', flush=True)
+			progress_bar.update(i / population.size())
 			network.set_params(individual.chromosome)
 			output = network.predict(self.train_x)
 			individual.fitness = np.mean(np.square(np.array(output) - self.train_y), axis=0).tolist()
