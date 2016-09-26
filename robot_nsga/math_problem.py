@@ -4,6 +4,7 @@ import sys
 
 import evolution
 import neuralnet
+import utils
 
 from database import Database
 
@@ -47,4 +48,5 @@ def main(args):
 
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
-	genetic_algorithm.iterate(n_iterations=args.iterations)
+	genetic_algorithm.iterate(n_iterations=args.iterations,
+		callback=lambda: utils.save_data(genetic_algorithm, database))
