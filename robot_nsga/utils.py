@@ -15,6 +15,10 @@ class ProgressBar:
 		self.width = width
 		self._print()
 
+	def __del__(self):
+		'''Erases the progress bar from the screen'''
+		print('\r' + ' ' * self.width + '\r', end=' ', flush=True)
+
 	def _print(self):
 		'''Prints the progress bar to the console'''
 		filling = '#' * int(self.progress * (self.width - 7) / 100)
