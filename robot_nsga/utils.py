@@ -19,7 +19,12 @@ class ProgressBar:
 		'''Prints the progress bar to the console'''
 		filling = '#' * int(self.progress * (self.width - 7) / 100)
 		filling = ('{: <' + str(self.width - 7) + '}').format(filling)
-		print('\r{: >3}% [{}]'.format(int(self.progress), filling))
+		print('\r{: >3}% [{}]'.format(int(self.progress), filling), end='', flush=True)
+
+	def update(self, progress):
+		'''Updates the progress bar to show the given progress'''
+		self.progress = progress
+		self._print()
 
 
 def save_data(genetic_algorithm, database):
