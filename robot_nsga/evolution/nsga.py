@@ -3,12 +3,13 @@
 class NSGA:
 	'''Multi-objective genetic algorithm'''
 
-	def __init__(self, problem, population_size):
+	def __init__(self, problem, population_size, generation=1):
 		'''Creates a genetic algorithm that will work on the provided problem'''
 		self.problem = problem
 		self.population = None
 		self.children = None
 		self.pop_size = population_size
+		self.generation = generation
 
 	def iterate(self, n_iterations=1, callback=None):
 		'''Perform n iterations of the genetic algorithm
