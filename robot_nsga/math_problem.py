@@ -1,11 +1,11 @@
 '''Evolution of a neural network to perform simple math functions.'''
 
+import random
 import sys
 
 import evolution
 import neuralnet
 import utils
-
 from database import Database
 
 
@@ -30,11 +30,17 @@ class MathProblem(evolution.Problem):
 		if chromosome is not None:
 			network.set_params(chromosome)
 
+	def generate_individual(self):
+		'''Returns a new individual with a random chromosome'''
+		chromosome = [random.gauss(0, 1) for _ in range(self.n_params)]
+		return evolution.Individual(chromosome)
+
 
 def main(args):
 	'''Module main method'''
 	database = Database(args.database)
 	problem = MathProblem()
+	random.seed()
 
 	if args.reset:
 		database.reset()

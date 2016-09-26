@@ -1,6 +1,6 @@
 '''Defines class NSGA'''
 
-import population
+from . import population
 
 
 class NSGA:
