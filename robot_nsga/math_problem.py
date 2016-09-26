@@ -30,6 +30,10 @@ class MathProblem(evolution.Problem):
 		if chromosome is not None:
 			network.set_params(chromosome)
 
+	def evaluate(self, population):
+		'''Tests each individual's performance in imitating the cos and sinc functions'''
+		pass
+
 	def generate_individual(self):
 		'''Returns a new individual with a random chromosome'''
 		chromosome = [random.gauss(0, 1) for _ in range(self.n_params)]
