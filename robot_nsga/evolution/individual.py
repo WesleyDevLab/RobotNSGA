@@ -6,4 +6,5 @@ class Individual:
 
 	def __init__(self, chromosome):
 		'''Creates a basic individual, with no metadata'''
+		self.name = None
 		self.chromosome = chromosome

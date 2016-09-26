@@ -12,6 +12,10 @@ class Population:
 		'''Returns an iterable through the individuals'''
 		return self.individuals.__iter__()
 
+	def add(self, new_individual):
+		'''Appends the given individual to the population'''
+		self.individuals.append(new_individual)
+
 	def size(self):
 		'''Returns the number of individuals in the population'''
 		return len(self.individuals)
