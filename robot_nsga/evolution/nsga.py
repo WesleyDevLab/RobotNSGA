@@ -16,4 +16,8 @@ class NSGA:
 
 		After each iteration, the provided callback function will be called.
 		'''
-		pass
+		for _ in range(n_iterations):
+			print('Starting generation ' + str(self.generation))
+			self.generation += 1
+			if callback is not None:
+				callback()
