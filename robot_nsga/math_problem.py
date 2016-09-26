@@ -33,3 +33,5 @@ def main(args):
 	database = Database(args.database)
 	problem = MathProblem()
 	genetic_algorithm = evolution.NSGA(problem)
+
+	genetic_algorithm.iterate(n_iterations=args.iterations)

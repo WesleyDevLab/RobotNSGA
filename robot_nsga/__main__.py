@@ -16,7 +16,9 @@ def main():
 	evolution_parser.add_argument('--reset',
 		action='store_true',
 		help='delete data and start from generation 1')
+	evolution_parser.add_argument('-i', '--iterations', type=int, help='number of iterations to perform')
 	evolution_parser.add_argument('-s', '--size', type=int, help='population size')
+	evolution_parser.set_defaults(iterations=1)
 
 	# Math problem
 	math_parser = subparsers.add_parser('math',
