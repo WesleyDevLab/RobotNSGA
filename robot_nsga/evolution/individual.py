@@ -10,6 +10,7 @@ class Individual:
 		self.chromosome = chromosome
 		self.fitness = []
 		self.rank = 0
+		self.crowding_distance = 0
 		self.domination_count = 0
 		self.dominated_solutions = []
 

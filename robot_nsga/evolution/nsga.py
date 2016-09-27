@@ -19,7 +19,25 @@ class NSGA:
 
 	def _crowding_distance(self):
 		'''Assings each individual in the population its crowding distance'''
-		pass
+		n_objectives = len(self.population.individuals[0].fitness)
+		f_max = [float('-inf') for _ in range(n_objectives)]
+		f_min = [float('inf') for _ in range(n_objectives)]
+		for individual in self.population:
+			individual.crowding_distance = 0
+			for i in range(n_objectives):
+				if individual.fitness[i] > f_max[i]:
+					f_max[i] = individual.fitness[i]
+				if individual.fitness[i] < f_min[i]:
+					f_min[i] = individual.fitness[i]
+		for front in self.population.fronts:
+			for i in range(n_objectives):
+				sorted_front = sorted(front, key=lambda a: a.fitness[i])
+				sorted_front[0].crowding_distance = float('inf')
+				sorted_front[-1].crowding_distance = float('inf')
+				for j in range(1, len(sorted_front) - 1):
+					sorted_front[j].crowding_distance += \
+						sorted_front[j + 1].fitness[i] - sorted_front[j - 1].fitness[i]
+					sorted_front[j].crowding_distance /= f_max[i] - f_min[i]
 
 	def _nondominated_sort(self):
 		'''Evaluates and groups individuals into nondomination fronts'''
