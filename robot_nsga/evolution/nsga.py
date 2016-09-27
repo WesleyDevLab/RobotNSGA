@@ -24,6 +24,7 @@ class NSGA:
 			winner2 = max(participants[-2:])
 			new_child = self.problem.crossover(winner1, winner2)
 			new_child.name = 'C' + str(i)
+			self.problem.mutate(new_child)
 			self.children.add(new_child)
 
 	def _crowding_distance(self):

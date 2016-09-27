@@ -15,3 +15,7 @@ class Problem:
 	def generate_individual(self):
 		'''Must return an individual object with a randomly generated chromosome'''
 		raise NotImplementedError('A problem class must implement generate_individual method')
+
+	def mutate(self, individual):
+		'''Must change the given individual's chromosome in place'''
+		raise NotImplementedError('A problem class must implement mutate method')
