@@ -18,11 +18,13 @@ class NSGA:
 	def _create_offspring(self):
 		'''Creates a population of children'''
 		self.children = population.Population()
-		for _ in range(self.pop_size):
+		for i in range(self.pop_size):
 			participants = random.sample(self.population, 4)
 			winner1 = max(participants[:2])
 			winner2 = max(participants[-2:])
-			self.children.add(self.problem.crossover(winner1, winner2))
+			new_child = self.problem.crossover(winner1, winner2)
+			new_child.name = 'C' + str(i)
+			self.children.add(new_child)
 
 	def _crowding_distance(self):
 		'''Assings each individual in the population its crowding distance'''
