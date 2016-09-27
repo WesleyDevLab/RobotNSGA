@@ -33,8 +33,8 @@ class FullyConnectedLayer:
 		new_bias = np.zeros((1, self.n_out))
 		acc = 0
 		for i in range(self.n_out):
-			new_weigths[:, i] = unrolled_weights[acc: acc + self.n_out]
-			acc += self.n_out
+			new_weigths[:, i] = unrolled_weights[acc: acc + self.n_in]
+			acc += self.n_in
 			new_bias[:, i] = unrolled_weights[acc]
 			acc += 1
 		self.weights.set_value(new_weigths)
