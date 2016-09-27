@@ -61,7 +61,7 @@ class NSGA:
 				for ind in individual.dominated_solutions:
 					ind.domination_count -= 1
 					if ind.domination_count == 0:
-						ind.rank = i + 1
+						ind.rank = i + 2
 						next_front.append(ind)
 			i += 1
 			self.population.fronts.append(next_front)
