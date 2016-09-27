@@ -1,5 +1,7 @@
 '''Defines class NSGA'''
 
+import random
+
 from . import population
 
 
@@ -15,7 +17,12 @@ class NSGA:
 
 	def _create_offspring(self):
 		'''Creates a population of children'''
-		pass
+		self.children = population.Population()
+		for _ in range(self.pop_size):
+			participants = random.sample(self.population, 4)
+			winner1 = max(participants[:2])
+			winner2 = max(participants[-2:])
+			self.children.add(self.problem.crossover(winner1, winner2))
 
 	def _crowding_distance(self):
 		'''Assings each individual in the population its crowding distance'''
