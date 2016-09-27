@@ -1,5 +1,7 @@
 '''Defines the NeuralNetwork class'''
 
+import copy
+
 import theano
 import theano.tensor as T
 
@@ -37,10 +39,10 @@ class NeuralNetwork:
 
 		Returns the number of elements used.
 		'''
-		params_vector = unrolled_weights
+		params_vector = copy.copy(unrolled_weights)
 		total_used = 0
 		for layer in self.layers:
-			used = layer.set_params(unrolled_weights)
+			used = layer.set_params(params_vector)
 			params_vector = params_vector[used :]
 			total_used += used
 		return total_used
