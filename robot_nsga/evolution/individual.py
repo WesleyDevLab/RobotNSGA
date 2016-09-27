@@ -13,6 +13,13 @@ class Individual:
 		self.domination_count = 0
 		self.dominated_solutions = []
 
+	def __repr__(self):
+		fitness_repr = ['{:0.2f}'.format(a) for a in self.fitness]
+		return self.name + '(' + str(fitness_repr) + ', ' + str(self.rank) + ')'
+
+	def __str__(self):
+		return self.name
+
 	def dominates(self, other):
 		'''Returns true if this individual dominates the other one'''
 		better = False
