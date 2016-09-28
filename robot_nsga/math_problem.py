@@ -24,12 +24,14 @@ class MathProblem(evolution.Problem):
 	def __init__(self):
 		'''Initializes parameters for the problem'''
 		self.n_params = 0
-		for i in range(len(ARCHITECTURE) - 1):
-			self.n_params += ARCHITECTURE[i] * ARCHITECTURE[i + 1] + ARCHITECTURE[i + 1]
 		trainx_path = os.path.abspath(pkg_resources.resource_filename('resources.math', 'train_x.txt'))
 		trainy_path = os.path.abspath(pkg_resources.resource_filename('resources.math', 'train_y.txt'))
 		self.train_x = np.loadtxt(trainx_path, delimiter=',')[:, None]
 		self.train_y = np.loadtxt(trainy_path, delimiter=',').T
+		self.neuron_lengths = []
+		for i in range(1, len(ARCHITECTURE)):
+			self.neuron_lengths += [ARCHITECTURE[i - 1] + 1] * ARCHITECTURE[i]
+		self.n_params = sum(self.neuron_lengths)
 
 	def _create_network(self, chromosome=None):
 		'''Creates a neural network for this problem'''
@@ -40,6 +42,10 @@ class MathProblem(evolution.Problem):
 		if chromosome is not None:
 			network.set_params(chromosome)
 		return network
+
+	def crossover(self, parent1, parent2):
+		'''Creates a new individual with genes from both parents'''
+		pass
 
 	def evaluate(self, population):
 		'''Tests each individual's performance in imitating the cos and sinc functions'''
@@ -59,6 +65,10 @@ class MathProblem(evolution.Problem):
 		'''Returns a new individual with a random chromosome'''
 		chromosome = [random.gauss(0, 1) for _ in range(self.n_params)]
 		return evolution.Individual(chromosome)
+
+	def mutate(self, individual):
+		'''Performs random mutations in the given individual'''
+		pass
 
 
 def main(args):
