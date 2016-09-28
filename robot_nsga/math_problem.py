@@ -16,6 +16,7 @@ from database import Database
 
 
 ARCHITECTURE = [1, 10, 10, 2]
+MUTATION_PROB = 0.01
 
 
 class MathProblem(evolution.Problem):
@@ -76,7 +77,9 @@ class MathProblem(evolution.Problem):
 
 	def mutate(self, individual):
 		'''Performs random mutations in the given individual'''
-		pass
+		for gene in individual.chromosome:
+			if random.random() < MUTATION_PROB:
+				gene = random.gauss(0, 1)
 
 
 def main(args):
