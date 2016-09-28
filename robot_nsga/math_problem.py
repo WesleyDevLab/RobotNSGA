@@ -77,9 +77,9 @@ class MathProblem(evolution.Problem):
 
 	def mutate(self, individual):
 		'''Performs random mutations in the given individual'''
-		for gene in individual.chromosome:
+		for i in range(len(individual.chromosome)):
 			if random.random() < MUTATION_PROB:
-				gene = random.gauss(0, 1)
+				individual.chromosome[i] = random.gauss(0, 1)
 
 
 def main(args):
