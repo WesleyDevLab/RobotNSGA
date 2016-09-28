@@ -31,6 +31,15 @@ class ProgressBar:
 		self._print()
 
 
+def generate_report(population):
+	'''Creates a dictionary containing relevant data from each individual in population'''
+	report = {val.name: {
+		'fitness': val.fitness,
+		'crowding_distance': val.crowding_distance
+		}
+		for val in population}
+	return report
+
 def save_data(genetic_algorithm, database):
 	'''Saves relevant data after each iteration'''
 	database.create_population()
@@ -41,3 +50,7 @@ def save_data(genetic_algorithm, database):
 			for val in genetic_algorithm.children}
 		pop_save.update(child_save)
 	database.save(pop_save)
+	report = generate_report(genetic_algorithm.population)
+	if genetic_algorithm.children is not None:
+		report.update(generate_report(genetic_algorithm.children))
+	database.save_report(report)
