@@ -45,7 +45,15 @@ class MathProblem(evolution.Problem):
 
 	def crossover(self, parent1, parent2):
 		'''Creates a new individual with genes from both parents'''
-		pass
+		total = 0
+		child_chromosome = []
+		for i in self.neuron_lengths:
+			if random.random() < 0.5:
+				child_chromosome += parent1.chromosome[total : total + i]
+			else:
+				child_chromosome += parent2.chromosome[total : total + i]
+			total += i
+		return evolution.Individual(child_chromosome)
 
 	def evaluate(self, population):
 		'''Tests each individual's performance in imitating the cos and sinc functions'''
