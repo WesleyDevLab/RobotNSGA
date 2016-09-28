@@ -19,7 +19,7 @@ class NSGA:
 		'''Creates a population of children'''
 		self.children = population.Population()
 		for i in range(self.pop_size):
-			participants = random.sample(self.population, 4)
+			participants = random.sample(self.population.individuals, 4)
 			winner1 = max(participants[:2])
 			winner2 = max(participants[-2:])
 			new_child = self.problem.crossover(winner1, winner2)
