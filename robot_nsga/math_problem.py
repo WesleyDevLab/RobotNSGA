@@ -101,6 +101,10 @@ def main(args):
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
+	if generation > 0:
+		parents, children = utils.load_data(database)
+		genetic_algorithm.set_population(parents)
+		genetic_algorithm.set_children(children)
 	for _ in range(args.iterations):
 		generation += 1
 		print('Starting generation ' + str(generation))
