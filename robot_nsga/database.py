@@ -74,7 +74,7 @@ class Database:
 
 	def load_report(self):
 		'''Returns the report corresponding to the selected population'''
-		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected))
+		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected) + '.json')
 		with open(path, 'rt') as in_file:
 			report = json.load(in_file)
 		return report
