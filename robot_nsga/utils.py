@@ -37,6 +37,7 @@ def generate_report(population):
 	'''Creates a dictionary containing relevant data from each individual in population'''
 	report = {val.name: {
 		'fitness': val.fitness,
+		'rank': val.rank,
 		'crowding_distance': val.crowding_distance
 		}
 		for val in population}
@@ -52,6 +53,7 @@ def load_data(database):
 		ind = evolution.Individual(np.fromstring(bstring).tolist())
 		ind.name = name
 		ind.fitness = report[name]['fitness']
+		ind.rank = report[name]['rank']
 		ind.crowding_distance = report[name]['crowding_distance']
 		if name.startswith('I'):
 			parents.append(ind)
