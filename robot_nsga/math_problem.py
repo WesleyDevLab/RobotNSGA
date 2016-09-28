@@ -64,9 +64,10 @@ class MathProblem(evolution.Problem):
 		i = 1
 		for individual in population:
 			progress_bar.update(i / population.size())
-			network.set_params(individual.chromosome)
-			output = network.predict(self.train_x)
-			individual.fitness = np.mean(np.square(np.array(output) - self.train_y), axis=0).tolist()
+			if not individual.fitness:
+				network.set_params(individual.chromosome)
+				output = network.predict(self.train_x)
+				individual.fitness = np.mean(np.square(np.array(output) - self.train_y), axis=0).tolist()
 			i += 1
 		progress_bar = 0
 
