@@ -2,6 +2,8 @@
 
 import numpy as np
 
+import evolution
+
 
 class ProgressBar:
 	'''Progress bar to be displayed in a separate line in the terminal'''
@@ -39,6 +41,23 @@ def generate_report(population):
 		}
 		for val in population}
 	return report
+
+def load_data(database):
+	'''Returns parent and children populations in the selected population of the database'''
+	pop_dict = database.load()
+	report = database.load_report()
+	parents = []
+	children = []
+	for name, bstring in pop_dict.items():
+		ind = evolution.Individual(np.fromstring(bstring).tolist())
+		ind.name = name
+		ind.fitness = report[name]['fitness']
+		ind.crowding_distance = report[name]['crowding_distance']
+		if name.startswith('I'):
+			parents.append(ind)
+		elif name.startswith('C'):
+			children.append(ind)
+	return (parents, children)
 
 def save_data(genetic_algorithm, database):
 	'''Saves relevant data after each iteration'''
