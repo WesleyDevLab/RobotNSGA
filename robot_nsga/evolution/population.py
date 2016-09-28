@@ -17,6 +17,10 @@ class Population:
 		'''Appends the given individual to the population'''
 		self.individuals.append(new_individual)
 
+	def join(self, other):
+		'''Adds the individuals of the other population to this one'''
+		self.individuals += other.individuals
+
 	def size(self):
 		'''Returns the number of individuals in the population'''
 		return len(self.individuals)
