@@ -94,13 +94,18 @@ class NSGA:
 			self._crowding_distance()
 			new_population = population.Population()
 			i = 0
+			j = 0
 			while new_population.size() + len(self.population.fronts[i]) <= self.pop_size:
 				for individual in self.population.fronts[i]:
+					individual.name = 'I' + str(j)
 					new_population.add(individual)
+					j += 1
 				i += 1
 			sorted_front = sorted(self.population.fronts[i], reverse=True)
-			for individual in sorted_front[:self.pop_size - self.population.size]:
+			for individual in sorted_front[:self.pop_size - new_population.size()]:
+				individual.name = 'I' + str(j)
 				new_population.add(individual)
+				j += 1
 			self.population = new_population
 			self._create_offspring()
 
