@@ -34,6 +34,10 @@ class ProgressBar:
 def save_data(genetic_algorithm, database):
 	'''Saves relevant data after each iteration'''
 	database.create_population()
-	save_dict = {val.name: np.asarray(val.chromosome).tobytes()
+	pop_save = {val.name: np.asarray(val.chromosome).tobytes()
 		for val in genetic_algorithm.population}
-	database.save(save_dict)
+	if genetic_algorithm.children is not None:
+		child_save = {val.name: np.asarray(val.chromosome).tobytes()
+			for val in genetic_algorithm.children}
+		pop_save.update(child_save)
+	database.save(pop_save)
