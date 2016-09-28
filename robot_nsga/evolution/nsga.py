@@ -88,6 +88,21 @@ class NSGA:
 			self._nondominated_sort()
 			self._crowding_distance()
 			self._create_offspring()
+		else:
+			self.population.join(self.children)
+			self._nondominated_sort()
+			self._crowding_distance()
+			new_population = population.Population()
+			i = 0
+			while new_population.size() + len(self.population.fronts[i]) <= self.pop_size:
+				for individual in self.population.fronts[i]:
+					new_population.add(individual)
+				i += 1
+			sorted_front = sorted(self.population.fronts[i], reverse=True)
+			for individual in sorted_front[:self.pop_size - self.population.size]:
+				new_population.add(individual)
+			self.population = new_population
+			self._create_offspring()
 
 	def set_children(self, new_children):
 		'''Sets the children population to be used'''
