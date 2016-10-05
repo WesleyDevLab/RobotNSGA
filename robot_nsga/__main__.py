@@ -2,6 +2,7 @@
 
 import argparse
 
+import graph
 import math_problem
 
 
@@ -10,6 +11,15 @@ def main():
 	global_parser = argparse.ArgumentParser()
 	global_parser.add_argument('-d', '--database', help='the directory to be used as database')
 	subparsers = global_parser.add_subparsers(title='subcommands')
+
+	# Graph module parser
+	graph_parser = subparsers.add_parser('graph',
+		description='Display graphs of performance metrics from a database',
+		help='Display performance graphs')
+	graph_parser.set_defaults(
+		database='.',
+		func=graph.main
+		)
 
 	# Evolution super-parser
 	evolution_parser = argparse.ArgumentParser(add_help=False)
