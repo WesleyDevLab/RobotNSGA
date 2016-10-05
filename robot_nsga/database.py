@@ -11,6 +11,25 @@ PROPERTIES_FILE = 'Properties.json'
 REPORT_DIRECTORY = 'reports'
 
 
+def is_database(path, verbose=False):
+	'''Returns true if the given directory contains a database
+
+	Argument verbose controls logging to the command line about error info.
+	'''
+	abs_path = os.path.abspath(path)
+	if not os.path.isdir(abs_path):
+		if verbose:
+			print('The directory ' + abs_path + ' does not exist')
+		return False
+	else:
+		prop_file = os.path.join(abs_path, PROPERTIES_FILE)
+		if not os.path.exists(prop_file):
+			if verbose:
+				print('The directory ' + abs_path + ' is not a database')
+			return False
+	return True
+
+
 class Database:
 	'''Manages persistence of the genetic algorithm's state.'''
 
