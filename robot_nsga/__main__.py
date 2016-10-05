@@ -2,7 +2,7 @@
 
 import argparse
 
-import graph
+import graph_module
 import math_problem
 
 
@@ -18,7 +18,7 @@ def main():
 		help='Display performance graphs')
 	graph_parser.set_defaults(
 		database='.',
-		func=graph.main
+		func=graph_module.main
 		)
 
 	# Evolution super-parser
