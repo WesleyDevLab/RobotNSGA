@@ -16,6 +16,9 @@ def main():
 	graph_parser = subparsers.add_parser('graph',
 		description='Display graphs of performance metrics from a database',
 		help='Display performance graphs')
+	graph_parser.add_argument('types', nargs='+', help='Types of graphs to generate', choices=[
+		'fitness'
+	])
 	graph_parser.set_defaults(
 		func=graph_module.main
 		)
