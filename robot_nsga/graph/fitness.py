@@ -14,12 +14,21 @@ def fitness_graph(database, indexes=None):
 	worst_fitness = []
 	x_range = range(1, generations + 1)
 
-	for i in x_range:
-		database.select(i)
-		individual_data = [val for key, val in database.load_report().items() if key.startswith('I')]
-		gen_fitness = [val['fitness'][0] for val in individual_data]
-		best_fitness.append(min(gen_fitness))
-		worst_fitness.append(max(gen_fitness))
+	if indexes is None:
+		indexes = list(range(database.properties['no_objectives']))
 
-	plt.semilogy(x_range, best_fitness, 'g', x_range, worst_fitness, 'r')
+	_, axes = plt.subplots(len(indexes), 1, sharex=True, squeeze=False)
+	axes = axes.T[0]
+
+	for j in range(len(indexes)):
+		best_fitness = []
+		worst_fitness = []
+		for i in x_range:
+			database.select(i)
+			individual_data = [val for key, val in database.load_report().items() if key.startswith('I')]
+			gen_fitness = [val['fitness'][indexes[j]] for val in individual_data]
+			best_fitness.append(min(gen_fitness))
+			worst_fitness.append(max(gen_fitness))
+		axes[j].semilogy(x_range, best_fitness, 'g', x_range, worst_fitness, 'r')
+
 	plt.show()
