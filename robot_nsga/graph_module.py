@@ -22,3 +22,5 @@ def main(args):
 	for graph_type in args.types:
 		if graph_type == 'fitness':
 			graph.fitness_graph(db, args.objectives)
+		elif graph_type == 'pareto':
+			graph.pareto_graph(db)

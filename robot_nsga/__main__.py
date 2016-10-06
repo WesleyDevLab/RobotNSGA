@@ -19,7 +19,8 @@ def main():
 	graph_parser.add_argument('-o', '--objectives', type=int, nargs='+',
 		help='indexes of the relevant objectives')
 	graph_parser.add_argument('types', nargs='+', help='types of graphs to generate', choices=[
-		'fitness'
+		'fitness',
+		'pareto'
 	])
 	graph_parser.set_defaults(
 		func=graph_module.main
