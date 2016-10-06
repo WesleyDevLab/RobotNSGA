@@ -85,6 +85,8 @@ class MathProblem(evolution.Problem):
 
 def main(args):
 	'''Module main method'''
+	if args.database is None:
+		args.database = 'MathDatabase'
 	database = Database(args.database)
 	problem = MathProblem()
 	random.seed()
