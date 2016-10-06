@@ -21,4 +21,4 @@ def main(args):
 
 	for graph_type in args.types:
 		if graph_type == 'fitness':
-			graph.fitness_graph(db)
+			graph.fitness_graph(db, args.objectives)
