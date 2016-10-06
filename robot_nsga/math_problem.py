@@ -96,6 +96,7 @@ def main(args):
 			print('ERROR: Population size must be specified when starting a new run.')
 			sys.exit()
 		database.set_property('population_size', args.size)
+		database.set_property('no_objectives', 2)
 	else:
 		database.select()
 

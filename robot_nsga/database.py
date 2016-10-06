@@ -63,6 +63,7 @@ class Database:
 		self.properties['binary_length'] = 0
 		self.properties['highest_population'] = 0
 		self.properties['population_size'] = 0
+		self.properties['no_objectives'] = 0
 		self._save_properties()
 
 	def set_property(self, key, value):
