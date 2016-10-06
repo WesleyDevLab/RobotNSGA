@@ -17,7 +17,6 @@ def main():
 		description='Display graphs of performance metrics from a database',
 		help='Display performance graphs')
 	graph_parser.set_defaults(
-		database='.',
 		func=graph_module.main
 		)
 
@@ -36,7 +35,6 @@ def main():
 		help='Execute the math test',
 		parents=[evolution_parser])
 	math_parser.set_defaults(
-		database='MathDatabase',
 		func=math_problem.main
 		)
 
