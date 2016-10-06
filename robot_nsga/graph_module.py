@@ -4,6 +4,7 @@ import os
 import sys
 
 import database
+import graph
 
 
 def main(args):
@@ -15,3 +16,9 @@ def main(args):
 		abs_path = os.path.abspath(args.database)
 	if not database.is_database(abs_path, verbose=True):
 		sys.exit()
+
+	db = database.Database(abs_path)
+
+	for graph_type in args.types:
+		if graph_type == 'fitness':
+			graph.fitness_graph(db)
