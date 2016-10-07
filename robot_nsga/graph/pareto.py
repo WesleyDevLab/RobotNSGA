@@ -34,6 +34,9 @@ def pareto_graph(database, objectives=None):
 			marker='o',
 			markeredgecolor='white')
 
+	plt.title('Movement of best front')
 	plt.xscale('log')
 	plt.yscale('log')
+	plt.xlabel(database.properties['objective_names'][objectives[0]])
+	plt.ylabel(database.properties['objective_names'][objectives[1]])
 	plt.show()
