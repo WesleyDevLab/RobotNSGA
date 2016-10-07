@@ -85,22 +85,11 @@ class MathProblem(evolution.Problem):
 
 def main(args):
 	'''Module main method'''
-	if args.database is None:
-		args.database = 'MathDatabase'
-	database = Database(args.database)
-	problem = MathProblem()
 	random.seed()
+	problem = MathProblem()
 
-	if args.reset:
-		database.reset()
-	if database.properties['highest_population'] == 0:
-		if args.size is None:
-			print('ERROR: Population size must be specified when starting a new run.')
-			sys.exit()
-		database.set_property('population_size', args.size)
-		database.set_objective_names(['cos', 'sinc'])
-	else:
-		database.select()
+	database = utils.initialize_database(args, 'MathDatabase')
+	database.set_objective_names(['cos', 'sinc'])
 
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']

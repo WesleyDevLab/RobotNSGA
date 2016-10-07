@@ -1,7 +1,10 @@
 '''Utility functions and classes'''
 
+import sys
+
 import numpy as np
 
+from database import Database
 import evolution
 
 
@@ -32,6 +35,25 @@ class ProgressBar:
 		self.progress = progress
 		self._print()
 
+
+def initialize_database(args, default_dir):
+	'''Performs the necessary checks and initialization procedures to initialize the database
+
+	Returns the database to be used.
+	'''
+	if args.database is None:
+		args.database = default_dir
+	ret_db = Database(args.database)
+	if args.reset:
+		ret_db.reset()
+	if ret_db.properties['highest_population'] == 0:
+		if args.size is None:
+			print('ERROR: Population size must be specified when starting a new run.')
+			sys.exit()
+		ret_db.set_property('population_size', args.size)
+	else:
+		ret_db.select()
+	return ret_db
 
 def generate_report(population):
 	'''Creates a dictionary containing relevant data from each individual in population'''
