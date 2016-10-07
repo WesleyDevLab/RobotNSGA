@@ -64,6 +64,7 @@ class Database:
 		self.properties['highest_population'] = 0
 		self.properties['population_size'] = 0
 		self.properties['no_objectives'] = 0
+		self.properties['objective_names'] = None
 		self._save_properties()
 
 	def set_property(self, key, value):
@@ -141,3 +142,9 @@ class Database:
 		if index < 0:
 			index = self.properties['highest_population']
 		self.selected = index
+
+	def set_objective_names(self, names):
+		'''Sets the text to be used in graphs for each objective'''
+		self.properties['objective_names'] = names
+		self.properties['no_objectives'] = len(names)
+		self._save_properties()
