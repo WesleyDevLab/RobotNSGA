@@ -4,7 +4,6 @@
 
 import os
 import random
-import sys
 
 import pkg_resources
 import numpy as np
@@ -12,7 +11,6 @@ import numpy as np
 import evolution
 import neuralnet
 import utils
-from database import Database
 
 
 ARCHITECTURE = [1, 10, 10, 2]
