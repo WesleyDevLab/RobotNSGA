@@ -81,7 +81,11 @@ def load_data(database):
 			parents.append(ind)
 		elif name.startswith('C'):
 			children.append(ind)
-	return (parents, children)
+	parent_pop = evolution.Population()
+	children_pop = evolution.Population()
+	parent_pop.individuals = parents
+	children_pop.individuals = children
+	return (parent_pop, children_pop)
 
 def save_data(genetic_algorithm, database):
 	'''Saves relevant data after each iteration'''
