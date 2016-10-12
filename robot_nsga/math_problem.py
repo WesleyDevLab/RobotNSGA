@@ -15,6 +15,7 @@ import utils
 
 ARCHITECTURE = [1, 10, 10, 2]
 MUTATION_PROB = 0.01
+SCREEN_WIDTH = 80
 
 
 class MathProblem(evolution.Problem):
@@ -67,7 +68,7 @@ class MathProblem(evolution.Problem):
 				output = network.predict(self.train_x)
 				individual.fitness = np.mean(np.square(np.array(output) - self.train_y), axis=0).tolist()
 			i += 1
-		progress_bar = 0
+		progress_bar.__del__()
 
 	def generate_individual(self):
 		'''Returns a new individual with a random chromosome'''
@@ -101,3 +102,4 @@ def main(args):
 		print('Starting generation ' + str(generation))
 		genetic_algorithm.iterate()
 		utils.save_data(genetic_algorithm, database)
+		print('=' * (SCREEN_WIDTH - 1))
