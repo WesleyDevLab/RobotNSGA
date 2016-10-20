@@ -62,7 +62,7 @@ class MathProblem(evolution.Problem):
 		progress_bar = utils.ProgressBar()
 		i = 1
 		for individual in population:
-			progress_bar.update(i / population.size())
+			progress_bar.update(i / population.size() * 100)
 			if not individual.fitness:
 				network.set_params(individual.chromosome)
 				output = network.predict(self.train_x)
