@@ -22,13 +22,20 @@ class ProgressBar:
 
 	def __del__(self):
 		'''Erases the progress bar from the screen'''
-		print('\r' + ' ' * self.width + '\r', end=' ', flush=True)
+		self._erase()
+
+	def _erase(self):
+		'''Erases the progress bar from the screen'''
+		print('\b' * self.width, end='', flush=True)
+		print(' ' * self.width, end='', flush=True)
+		print('\b' * self.width, end='', flush=True)
 
 	def _print(self):
 		'''Prints the progress bar to the console'''
 		filling = '#' * int(self.progress * (self.width - 7) / 100)
 		filling = ('{: <' + str(self.width - 7) + '}').format(filling)
-		print('\r{: >3}% [{}]'.format(int(self.progress), filling), end='', flush=True)
+		self._erase()
+		print('{: >3}% [{}]'.format(int(self.progress), filling), end='', flush=True)
 
 	def update(self, progress):
 		'''Updates the progress bar to show the given progress'''
@@ -81,7 +88,11 @@ def load_data(database):
 			parents.append(ind)
 		elif name.startswith('C'):
 			children.append(ind)
-	return (parents, children)
+	parent_pop = evolution.Population()
+	children_pop = evolution.Population()
+	parent_pop.individuals = parents
+	children_pop.individuals = children
+	return (parent_pop, children_pop)
 
 def save_data(genetic_algorithm, database):
 	'''Saves relevant data after each iteration'''
