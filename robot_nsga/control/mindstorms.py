@@ -14,6 +14,7 @@ class Mindstorms(robot.Robot):
 	'''Robot class for LEGO Mindstorms(TM) robots'''
 
 	def __init__(self):
+		self.dof = 3
 		self.server_socket = None
 		self.client_socket = None
 
@@ -49,3 +50,8 @@ class Mindstorms(robot.Robot):
 		self.client_socket.close()
 		self.server_socket.close()
 		print('EV3 disconnected')
+
+	def set_motor(self, motor_number, power):
+		'''Sends a 'M' command to the robot'''
+		if 0 < motor_number <= self.dof:
+			self._send_message('M' + str(motor_number), np.clip(power, -100, 100))
