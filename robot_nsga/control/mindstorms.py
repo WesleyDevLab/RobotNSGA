@@ -45,5 +45,6 @@ class Mindstorms(robot.Robot):
 
 	def disconnect(self):
 		'''Disconnects the EV3 brick'''
+		self._send_message('END', True)
 		self.client_socket.close()
 		self.server_socket.close()
