@@ -18,6 +18,17 @@ class Mindstorms(robot.Robot):
 		self.server_socket = None
 		self.client_socket = None
 
+	def _receive_message(self):
+		'''Waits for an incoming message and returns the title and the content of the received message'''
+		data = self.client_socket.recv(1024)
+		data = data[6:]
+		title_length = np.fromstring(data[0], dtype=np.int8)
+		title = data[1 : title_length + 1]
+		data = data[title_length + 1:]
+		message_length = np.fromstring(data[0:2], dtype=np.int16)
+		message = data[2 : message_length + 2]
+		return title, message
+
 	def _send_message(self, command, value):
 		'''Sends a command to the robot'''
 		message = HEADER + np.int8(len(command) + 1).tobytes() + \
