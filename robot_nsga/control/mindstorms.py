@@ -21,16 +21,16 @@ class Mindstorms(robot.Robot):
 		'''Sends a command to the robot'''
 		message = HEADER + np.int8(len(command) + 1).tobytes() + \
 			bytes(command, 'ascii') + b'\x00'
-		if isinstance(value, int) or isinstance(value, float):
+		if isinstance(value, bool):
+			message += np.int16(1).tobytes()
+			if value:
+				message += b'\x01'
+			else:
+				message += b'\x00'
+		elif isinstance(value, int) or isinstance(value, float):
 			message += np.int16(4).tobytes() + np.float32(value).tobytes()
 		elif isinstance(value, str):
 			message += np.int16(len(value) + 1).tobytes() + bytes(value, 'ascii') + b'\x00'
-		elif isinstance(value, bool):
-			message += np.int16(1).tobytes()
-			if value:
-				message += b'\01'
-			else:
-				message += b'\00'
 		message = np.int16(len(message)).tobytes() + message
 		self.client_socket.send(message)
 
@@ -48,3 +48,4 @@ class Mindstorms(robot.Robot):
 		self._send_message('END', True)
 		self.client_socket.close()
 		self.server_socket.close()
+		print('EV3 disconnected')
