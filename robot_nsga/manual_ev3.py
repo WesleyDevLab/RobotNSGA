@@ -11,6 +11,8 @@ while True:
 	if command == 'END':
 		ev3.disconnect()
 		break
+	elif command == 'HOME':
+		ev3.home()
 	elif command == 'M1':
 		ev3.set_motor(1, float(value[0]))
 	elif command == 'M2':

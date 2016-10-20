@@ -51,6 +51,10 @@ class Mindstorms(robot.Robot):
 		self.server_socket.close()
 		print('EV3 disconnected')
 
+	def home(self):
+		'''Returns the robot to the home position'''
+		self._send_message('HOME', True)
+
 	def set_motor(self, motor_number, power):
 		'''Sends a 'M' command to the robot'''
 		if 0 < motor_number <= self.dof:
