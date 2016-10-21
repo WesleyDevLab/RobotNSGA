@@ -21,5 +21,7 @@ while True:
 		ev3.set_motor(3, float(value[0]))
 	elif command == 'READ':
 		print(ev3.read_joints())
+	elif command == 'RESET':
+		ev3.reset()
 	else:
 		print('Unrecognized command')

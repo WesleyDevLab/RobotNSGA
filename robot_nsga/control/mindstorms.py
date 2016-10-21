@@ -73,6 +73,10 @@ class Mindstorms(robot.Robot):
 		joints = [float(val) for val in answer.split(',')]
 		return joints
 
+	def reset(self):
+		'''Resets the joint measurements to zero'''
+		self._send_message('RESET', True)
+
 	def set_motor(self, motor_number, power):
 		'''Sends a 'M' command to the robot'''
 		if 0 < motor_number <= self.dof:
