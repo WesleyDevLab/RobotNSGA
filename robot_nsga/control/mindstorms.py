@@ -22,11 +22,11 @@ class Mindstorms(robot.Robot):
 		'''Waits for an incoming message and returns the title and the content of the received message'''
 		data = self.client_socket.recv(1024)
 		data = data[6:]
-		title_length = np.fromstring(data[0], dtype=np.int8)
-		title = data[1 : title_length + 1]
+		title_length = np.fromstring(data, count=1, dtype=np.int8)[0]
+		title = data[1 : title_length].decode('ascii')
 		data = data[title_length + 1:]
-		message_length = np.fromstring(data[0:2], dtype=np.int16)
-		message = data[2 : message_length + 2]
+		message_length = np.fromstring(data, count=1, dtype=np.int16)[0]
+		message = data[2 : message_length + 1].decode('ascii')
 		return title, message
 
 	def _send_message(self, command, value):

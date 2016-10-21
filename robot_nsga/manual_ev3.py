@@ -19,5 +19,8 @@ while True:
 		ev3.set_motor(2, float(value[0]))
 	elif command == 'M3':
 		ev3.set_motor(3, float(value[0]))
+	elif command == 'READ':
+		ev3._send_message('READ', True)
+		print(ev3._receive_message())
 	else:
 		print('Unrecognized command')
