@@ -16,6 +16,10 @@ class Robot:
 		'''Must return the physical robot to its home position'''
 		raise NotImplementedError("A robot class must implement the 'home' method")
 
+	def read_joints(self):
+		'''Must return an array with the current joint positions'''
+		raise NotImplementedError("A robot class must implement the 'read_joints' method")
+
 	def set_motor(self, motor_number, power):
 		'''Must move the specified motor with the given power in the physical robot'''
 		raise NotImplementedError("A robot class must implement the 'set_motor' method")

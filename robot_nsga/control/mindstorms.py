@@ -66,6 +66,13 @@ class Mindstorms(robot.Robot):
 		'''Returns the robot to the home position'''
 		self._send_message('HOME', True)
 
+	def read_joints(self):
+		'''Returns the positions of all joints'''
+		self._send_message('READ', True)
+		_, answer = self._receive_message()
+		joints = [float(val) for val in answer.split(',')]
+		return joints
+
 	def set_motor(self, motor_number, power):
 		'''Sends a 'M' command to the robot'''
 		if 0 < motor_number <= self.dof:

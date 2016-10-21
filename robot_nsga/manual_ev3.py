@@ -20,7 +20,6 @@ while True:
 	elif command == 'M3':
 		ev3.set_motor(3, float(value[0]))
 	elif command == 'READ':
-		ev3._send_message('READ', True)
-		print(ev3._receive_message())
+		print(ev3.read_joints())
 	else:
 		print('Unrecognized command')
