@@ -3,6 +3,7 @@
 import argparse
 
 import graph_module
+import ev3_problem
 import math_problem
 
 
@@ -34,6 +35,15 @@ def main():
 	evolution_parser.add_argument('-i', '--iterations', type=int, help='number of iterations to perform')
 	evolution_parser.add_argument('-s', '--size', type=int, help='population size')
 	evolution_parser.set_defaults(iterations=1)
+
+	# EV3 problem
+	ev3_parser = subparsers.add_parser('ev3',
+		description='EV3 position regulation using neural networks',
+		help='Train EV3 robot',
+		parents=[evolution_parser])
+	ev3_parser.set_defaults(
+		func=ev3_problem.main
+		)
 
 	# Math problem
 	math_parser = subparsers.add_parser('math',
