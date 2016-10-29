@@ -65,6 +65,7 @@ class Mindstorms(robot.Robot):
 	def home(self):
 		'''Returns the robot to the home position'''
 		self._send_message('HOME', True)
+		self._receive_message()
 
 	def read_joints(self):
 		'''Returns the positions of all joints'''
