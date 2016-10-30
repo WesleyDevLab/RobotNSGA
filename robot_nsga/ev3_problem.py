@@ -27,5 +27,6 @@ def main(args):
 		generation += 1
 		print('Starting generation ' + str(generation))
 		genetic_algorithm.iterate()
+		database.create_population()
 		utils.save_data(genetic_algorithm, database)
 		print('=' * (SCREEN_WIDTH - 1))
