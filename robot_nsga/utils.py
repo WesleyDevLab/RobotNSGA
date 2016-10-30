@@ -96,7 +96,6 @@ def load_data(database):
 
 def save_data(genetic_algorithm, database):
 	'''Saves relevant data after each iteration'''
-	database.create_population()
 	pop_save = {val.name: np.asarray(val.chromosome).tobytes()
 		for val in genetic_algorithm.population}
 	if genetic_algorithm.children is not None:
