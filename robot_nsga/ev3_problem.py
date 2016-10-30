@@ -1,5 +1,6 @@
 '''EV3 position regulation using neural networks'''
 
+import copy
 import random
 
 import control
@@ -26,7 +27,7 @@ class EV3Problem(evolution.Problem):
 		self.robot.disconnect()
 
 	def crossover(self, parent1, parent2):
-		pass
+		return copy.deepcopy(parent1)
 
 	def evaluate(self, population):
 		pass
