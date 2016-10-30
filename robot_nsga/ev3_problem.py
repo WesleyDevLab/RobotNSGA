@@ -6,6 +6,8 @@ import evolution
 import utils
 
 
+SCREEN_WIDTH = 80
+
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
 	pass
