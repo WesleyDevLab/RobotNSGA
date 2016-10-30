@@ -2,6 +2,7 @@
 
 import random
 
+import control
 import evolution
 import utils
 
@@ -12,7 +13,11 @@ class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
 
 	def __init__(self):
-		pass
+		self.robot = control.Mindstorms()
+		self.robot.connect()
+
+	def __del__(self):
+		self.robot.disconnect()
 
 	def crossover(self, parent1, parent2):
 		pass
