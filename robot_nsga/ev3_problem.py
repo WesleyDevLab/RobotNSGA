@@ -10,6 +10,8 @@ import utils
 
 ARCHITECTURE = [6, 20, 50, 20, 10, 3]
 MUTATION_PROB = 0.005
+RANDOM_MU = 0
+RANDOM_SIGMA = 1
 SCREEN_WIDTH = 80
 
 class EV3Problem(evolution.Problem):
@@ -27,17 +29,27 @@ class EV3Problem(evolution.Problem):
 		self.robot.disconnect()
 
 	def crossover(self, parent1, parent2):
-		return copy.deepcopy(parent1)
+		total = 0
+		child_chromosome = []
+		for i in self.neuron_lengths:
+			if random.random() < 0.5:
+				child_chromosome += parent1.chromosome[total : total + i]
+			else:
+				child_chromosome += parent2.chromosome[total : total + i]
+			total += i
+		return evolution.Individual(child_chromosome)
 
 	def evaluate(self, population):
 		pass
 
 	def generate_individual(self):
-		chromosome = [random.gauss(0, 1) for _ in range(self.n_params)]
+		chromosome = [random.gauss(RANDOM_MU, RANDOM_SIGMA) for _ in range(self.n_params)]
 		return evolution.Individual(chromosome)
 
 	def mutate(self, individual):
-		pass
+		for i in range(len(individual.chromosome)):
+			if random.random() < MUTATION_PROB:
+				individual.chromosome[i] = random.gauss(RANDOM_MU, RANDOM_SIGMA)
 
 
 def main(args):
