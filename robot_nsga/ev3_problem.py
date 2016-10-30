@@ -10,10 +10,25 @@ SCREEN_WIDTH = 80
 
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
-	pass
+
+	def __init__(self):
+		pass
+
+	def crossover(self, parent1, parent2):
+		pass
+
+	def evaluate(self, population):
+		pass
+
+	def generate_individual(self):
+		pass
+
+	def mutate(self, individual):
+		pass
 
 
 def main(args):
+	'''Module main function'''
 	random.seed()
 	problem = EV3Problem()
 	database = utils.initialize_database(args, 'RobotTrainingData')
