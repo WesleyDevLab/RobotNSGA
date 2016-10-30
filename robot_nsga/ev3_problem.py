@@ -7,6 +7,8 @@ import evolution
 import utils
 
 
+ARCHITECTURE = [6, 20, 50, 20, 10, 3]
+MUTATION_PROB = 0.005
 SCREEN_WIDTH = 80
 
 class EV3Problem(evolution.Problem):
@@ -15,6 +17,10 @@ class EV3Problem(evolution.Problem):
 	def __init__(self):
 		self.robot = control.Mindstorms()
 		self.robot.connect()
+		self.neuron_lengths = []
+		for i in range(1, len(ARCHITECTURE)):
+			self.neuron_lengths += [ARCHITECTURE[i - 1] + 1] * ARCHITECTURE[i]
+		self.n_params = sum(self.neuron_lengths)
 
 	def __del__(self):
 		self.robot.disconnect()
