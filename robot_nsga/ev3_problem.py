@@ -32,7 +32,8 @@ class EV3Problem(evolution.Problem):
 		pass
 
 	def generate_individual(self):
-		pass
+		chromosome = [random.gauss(0, 1) for _ in range(self.n_params)]
+		return evolution.Individual(chromosome)
 
 	def mutate(self, individual):
 		pass
