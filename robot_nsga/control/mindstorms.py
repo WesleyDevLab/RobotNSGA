@@ -1,8 +1,11 @@
 '''Defines the Mindstorms robot class'''
 
+# pylint: disable = C0103
+
+import math
+from math import sin, cos
 
 import bluetooth
-
 import numpy as np
 
 from . import robot
@@ -17,6 +20,7 @@ class Mindstorms(robot.Robot):
 		self.dof = 3
 		self.server_socket = None
 		self.client_socket = None
+		self.joints = None
 
 	def _receive_message(self):
 		'''Waits for an incoming message and returns the title and the content of the received message'''
@@ -55,6 +59,15 @@ class Mindstorms(robot.Robot):
 		self.client_socket, _ = self.server_socket.accept()
 		print('EV3 connected')
 
+	def direct_kinematics(self):
+		'''Returns the position of the robot's end effector'''
+		q = [math.radians(x) for x in self.joints]
+		r = -104 * cos(q[1]) + 123 * cos(q[1] - q[2]) + 8 * (7 + 5 * sin(q[1]) + 4 * sin(q[1] - q[2]))
+		posx = cos(q[0]) * r
+		posy = sin(q[0]) * r
+		posz = 100 + 40 * cos(q[1]) + 32 * cos(q[1] - q[2]) + 104 * sin(q[1]) - 123 * sin(q[1] - q[2])
+		return posx, posy, posz
+
 	def disconnect(self):
 		'''Disconnects the EV3 brick'''
 		self._send_message('END', True)
@@ -71,8 +84,8 @@ class Mindstorms(robot.Robot):
 		'''Returns the positions of all joints'''
 		self._send_message('READ', True)
 		_, answer = self._receive_message()
-		joints = [float(val) for val in answer.split(',')]
-		return joints
+		self.joints = [float(val) for val in answer.split(',')]
+		return self.joints
 
 	def reset(self):
 		'''Resets the joint measurements to zero'''
