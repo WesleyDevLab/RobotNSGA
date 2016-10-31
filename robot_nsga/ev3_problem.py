@@ -28,6 +28,16 @@ class EV3Problem(evolution.Problem):
 	def __del__(self):
 		self.robot.disconnect()
 
+	def _create_network(self, chromosome=None):
+		'''Creates a neural network for this problem'''
+		network = neuralnet.NeuralNetwork()
+		for i in range(len(ARCHITECTURE) - 1):
+			network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1]))
+		network.compile()
+		if chromosome is not None:
+			network.set_params(chromosome)
+		return network
+
 	def crossover(self, parent1, parent2):
 		total = 0
 		child_chromosome = []
