@@ -8,6 +8,10 @@ class Robot:
 		'''Must set the connection to the physical robot'''
 		raise NotImplementedError("A robot class must implement the 'connect' method")
 
+	def direct_kinematics(self, joint_pos):
+		'''Must return a tuple containing the position of the robot's end effector'''
+		raise NotImplementedError("A robot class must implement the 'direct_kinematics' method")
+
 	def disconnect(self):
 		'''Must end the connection established by the connect method'''
 		raise NotImplementedError("A robot class must implement the 'disconnect' method")
