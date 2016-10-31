@@ -14,6 +14,7 @@ ARCHITECTURE = [6, 20, 50, 20, 10, 3]
 MUTATION_PROB = 0.005
 RANDOM_MU = 0
 RANDOM_SIGMA = 1
+SAMPLING_FREQ = 10
 SCREEN_WIDTH = 80
 TIMEOUT = 10
 
@@ -43,14 +44,20 @@ class EV3Problem(evolution.Problem):
 
 	def _run_test(self, goal_position, chromosome):
 		'''Runs a single position regulation test'''
-		finish = False
+		network = self._create_network(chromosome)
 		clock = pygame.time.Clock()
+		inputs = [list(goal_position) + [0] * 3]
+		finish = False
 		start_time = pygame.time.get_ticks()
 		while not finish:
+			inputs[0][3:] = self.robot.read_joints()
+			outputs = network.predict(inputs)
+			for number, speed in enumerate(outputs[0], 1):
+				self.robot.set_motor(number, 0)
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
 				finish = True
 			print(clock.get_rawtime())
-			clock.tick_busy_loop(20)
+			clock.tick_busy_loop(SAMPLING_FREQ)
 
 	def crossover(self, parent1, parent2):
 		total = 0
@@ -87,7 +94,7 @@ def main(args):
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
 
-	problem._run_test((-90, 90, 220), None)
+	problem._run_test((-90, 90, 220), problem.generate_individual().chromosome)
 
 	if generation > 0:
 		parents, children = utils.load_data(database)
