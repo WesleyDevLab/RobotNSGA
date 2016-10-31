@@ -1,10 +1,10 @@
 '''EV3 position regulation using neural networks'''
 
-import copy
 import random
 
 import control
 import evolution
+import neuralnet
 import utils
 
 
