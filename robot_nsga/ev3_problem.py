@@ -16,6 +16,7 @@ RANDOM_MU = 0
 RANDOM_SIGMA = 1
 SAMPLING_FREQ = 10
 SCREEN_WIDTH = 80
+SPEED_CAP = 20
 TIMEOUT = 10
 
 class EV3Problem(evolution.Problem):
@@ -51,12 +52,12 @@ class EV3Problem(evolution.Problem):
 		start_time = pygame.time.get_ticks()
 		while not finish:
 			inputs[0][3:] = self.robot.read_joints()
-			outputs = network.predict(inputs)
-			for number, speed in enumerate(outputs[0], 1):
-				self.robot.set_motor(number, 0)
+			outputs = [max(min(x, SPEED_CAP), -SPEED_CAP) for x in network.predict(inputs)[0]]
+			for number, speed in enumerate(outputs, 1):
+				self.robot.set_motor(number, float(speed))
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
 				finish = True
-			print(clock.get_rawtime())
+			print(outputs, clock.get_rawtime())
 			clock.tick_busy_loop(SAMPLING_FREQ)
 
 	def crossover(self, parent1, parent2):
@@ -94,6 +95,8 @@ def main(args):
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
 
+	problem.robot.home()
+	problem.robot.reset()
 	problem._run_test((-90, 90, 220), problem.generate_individual().chromosome)
 
 	if generation > 0:
