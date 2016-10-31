@@ -2,6 +2,8 @@
 
 import random
 
+import pygame
+
 import control
 import evolution
 import neuralnet
@@ -13,6 +15,7 @@ MUTATION_PROB = 0.005
 RANDOM_MU = 0
 RANDOM_SIGMA = 1
 SCREEN_WIDTH = 80
+TIMEOUT = 10
 
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
@@ -37,6 +40,17 @@ class EV3Problem(evolution.Problem):
 		if chromosome is not None:
 			network.set_params(chromosome)
 		return network
+
+	def _run_test(self, goal_position, chromosome):
+		'''Runs a single position regulation test'''
+		finish = False
+		clock = pygame.time.Clock()
+		start_time = pygame.time.get_ticks()
+		while not finish:
+			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
+				finish = True
+			print(clock.get_rawtime())
+			clock.tick_busy_loop(20)
 
 	def crossover(self, parent1, parent2):
 		total = 0
@@ -64,6 +78,7 @@ class EV3Problem(evolution.Problem):
 
 def main(args):
 	'''Module main function'''
+	pygame.init()
 	random.seed()
 	problem = EV3Problem()
 	database = utils.initialize_database(args, 'RobotTrainingData')
@@ -71,6 +86,9 @@ def main(args):
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
+
+	problem._run_test((-90, 90, 220), None)
+
 	if generation > 0:
 		parents, children = utils.load_data(database)
 		genetic_algorithm.set_population(parents)
