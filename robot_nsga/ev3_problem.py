@@ -21,7 +21,8 @@ SPEED_CAP = 20
 STALL_SECONDS = 1
 TIMEOUT = 10
 
-def input_thread(var):
+def emergency_stop(var):
+	'''Wait for emergency stop keystroke'''
 	input()
 	var.append(None)
 
@@ -56,7 +57,7 @@ class EV3Problem(evolution.Problem):
 		inputs = [list(goal_position) + [0] * 3]
 		finish = False
 		dummy_list = []
-		_thread.start_new_thread(input_thread, (dummy_list,))
+		_thread.start_new_thread(emergency_stop, (dummy_list,))
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
 		while not finish:
