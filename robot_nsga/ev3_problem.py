@@ -19,7 +19,6 @@ SAMPLING_FREQ = 10
 SCREEN_WIDTH = 80
 SPEED_CAP = 20
 STALL_SECONDS = 1
-STALL_THRESHOLD = 3
 TIMEOUT = 10
 
 def input_thread(var):
@@ -58,7 +57,6 @@ class EV3Problem(evolution.Problem):
 		finish = False
 		dummy_list = []
 		_thread.start_new_thread(input_thread, (dummy_list,))
-		last_joints = self.robot.read_joints()
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
 		while not finish:
@@ -70,21 +68,16 @@ class EV3Problem(evolution.Problem):
 			if dummy_list:
 				finish = True
 			# Stall stop criterion
-			stall = True
-			for last, curr in zip(last_joints, inputs[0][3:]):
-				if abs(last - curr) > STALL_THRESHOLD:
-					stall = False
-			if stall:
+			if self.robot.detect_stall():
 				stall_counter += 1
 			else:
 				stall_counter = 0
 			if stall_counter >= STALL_SECONDS * SAMPLING_FREQ:
 				finish = True
-			last_joints = inputs[0][3:]
 			# Timeout stop criterion
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
 				finish = True
-			print(last_joints, outputs, clock.get_rawtime())
+			print(self.robot.joints, outputs, clock.get_rawtime(), sep='\t')
 			clock.tick_busy_loop(SAMPLING_FREQ)
 
 	def crossover(self, parent1, parent2):

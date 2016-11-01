@@ -12,6 +12,7 @@ from . import robot
 
 HEADER = b'\x01\x00\x81\x9E'
 PORT = 1
+STALL_THRESHOLD = 3
 
 class Mindstorms(robot.Robot):
 	'''Robot class for LEGO Mindstorms(TM) robots'''
@@ -21,6 +22,7 @@ class Mindstorms(robot.Robot):
 		self.server_socket = None
 		self.client_socket = None
 		self.joints = None
+		self.last_joints = None
 
 	def _receive_message(self):
 		'''Waits for an incoming message and returns the title and the content of the received message'''
@@ -59,6 +61,18 @@ class Mindstorms(robot.Robot):
 		self.client_socket, _ = self.server_socket.accept()
 		print('EV3 connected')
 
+	def detect_stall(self):
+		'''Returns True if the robot did not move since the last call'''
+		if self.last_joints is None:
+			self.last_joints = self.joints
+			return False
+		stall = True
+		for last, curr in zip(self.last_joints, self.joints):
+			if abs(last - curr) > STALL_THRESHOLD:
+				stall = False
+		self.last_joints = self.joints
+		return stall
+
 	def direct_kinematics(self):
 		'''Returns the position of the robot's end effector'''
 		q = [math.radians(x) for x in self.joints]
@@ -84,7 +98,7 @@ class Mindstorms(robot.Robot):
 		'''Returns the positions of all joints'''
 		self._send_message('READ', True)
 		_, answer = self._receive_message()
-		self.joints = [float(val) for val in answer.split(',')]
+		self.joints = [int(val) for val in answer.split(',')]
 		return self.joints
 
 	def reset(self):
