@@ -1,6 +1,7 @@
 '''EV3 position regulation using neural networks'''
 
 import random
+import _thread
 
 import pygame
 
@@ -20,6 +21,10 @@ SPEED_CAP = 20
 STALL_SECONDS = 1
 STALL_THRESHOLD = 3
 TIMEOUT = 10
+
+def input_thread(var):
+	input()
+	var.append(None)
 
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
@@ -51,6 +56,8 @@ class EV3Problem(evolution.Problem):
 		clock = pygame.time.Clock()
 		inputs = [list(goal_position) + [0] * 3]
 		finish = False
+		dummy_list = []
+		_thread.start_new_thread(input_thread, (dummy_list,))
 		last_joints = self.robot.read_joints()
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
@@ -59,6 +66,9 @@ class EV3Problem(evolution.Problem):
 			outputs = [max(min(x, SPEED_CAP), -SPEED_CAP) for x in network.predict(inputs)[0]]
 			for number, speed in enumerate(outputs, 1):
 				self.robot.set_motor(number, float(speed))
+			# Emergency stop
+			if dummy_list:
+				finish = True
 			# Stall stop criterion
 			stall = True
 			for last, curr in zip(last_joints, inputs[0][3:]):
