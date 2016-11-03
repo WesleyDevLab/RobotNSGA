@@ -22,10 +22,10 @@ SPEED_CAP = 20
 STALL_SECONDS = 1
 TIMEOUT = 10
 
-def emergency_stop(var):
+def emergency_stop():
 	'''Wait for emergency stop keystroke'''
 	input()
-	var.append(None)
+	_thread.interrupt_main()
 
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
@@ -51,8 +51,6 @@ class EV3Problem(evolution.Problem):
 		clock = pygame.time.Clock()
 		inputs = np.array([list(goal_position) + [0] * 3])
 		finish = False
-		dummy_list = []
-		_thread.start_new_thread(emergency_stop, (dummy_list,))
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
 		while not finish:
@@ -60,9 +58,6 @@ class EV3Problem(evolution.Problem):
 			outputs = np.clip(self.network.predict(inputs), -SPEED_CAP, SPEED_CAP)
 			for idx, speed in np.ndenumerate(outputs):
 				self.robot.set_motor(idx[1] + 1, float(speed))
-			# Emergency stop
-			if dummy_list:
-				finish = True
 			# Stall stop criterion
 			if self.robot.detect_stall():
 				stall_counter += 1
@@ -114,6 +109,7 @@ def main(args):
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
 
+	_thread.start_new_thread(emergency_stop, ())
 	problem.robot.home()
 	problem.robot.reset()
 	problem._run_test((-90, 90, 220), problem.generate_individual().chromosome)
