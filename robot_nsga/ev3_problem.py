@@ -76,7 +76,7 @@ class EV3Problem(evolution.Problem):
 			print(self.robot.joints, outputs, clock.get_rawtime(), sep='\t')
 			clock.tick_busy_loop(SAMPLING_FREQ)
 		total_time = pygame.time.get_ticks() - start_time
-		error = np.linalg.norm(self.robot.direct_kinematics() - goal_position)
+		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
 		return total_time, error
 
 	def crossover(self, parent1, parent2):
