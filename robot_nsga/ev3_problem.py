@@ -4,6 +4,7 @@ import random
 import _thread
 
 import pygame
+import numpy as np
 
 import control
 import evolution
@@ -54,7 +55,7 @@ class EV3Problem(evolution.Problem):
 		'''Runs a single position regulation test'''
 		network = self._create_network(chromosome)
 		clock = pygame.time.Clock()
-		inputs = [list(goal_position) + [0] * 3]
+		inputs = np.array([list(goal_position) + [0] * 3])
 		finish = False
 		dummy_list = []
 		_thread.start_new_thread(emergency_stop, (dummy_list,))
@@ -62,9 +63,9 @@ class EV3Problem(evolution.Problem):
 		start_time = pygame.time.get_ticks()
 		while not finish:
 			inputs[0][3:] = self.robot.read_joints()
-			outputs = [max(min(x, SPEED_CAP), -SPEED_CAP) for x in network.predict(inputs)[0]]
-			for number, speed in enumerate(outputs, 1):
-				self.robot.set_motor(number, float(speed))
+			outputs = np.clip(network.predict(inputs), -SPEED_CAP, SPEED_CAP)
+			for idx, speed in np.ndenumerate(outputs):
+				self.robot.set_motor(idx[1] + 1, float(speed))
 			# Emergency stop
 			if dummy_list:
 				finish = True
