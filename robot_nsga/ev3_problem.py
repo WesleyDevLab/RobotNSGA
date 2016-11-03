@@ -37,23 +37,17 @@ class EV3Problem(evolution.Problem):
 		for i in range(1, len(ARCHITECTURE)):
 			self.neuron_lengths += [ARCHITECTURE[i - 1] + 1] * ARCHITECTURE[i]
 		self.n_params = sum(self.neuron_lengths)
+		self.network = neuralnet.NeuralNetwork()
+		for i in range(len(ARCHITECTURE) - 1):
+			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1]))
+		self.network.compile()
 
 	def __del__(self):
 		self.robot.disconnect()
 
-	def _create_network(self, chromosome=None):
-		'''Creates a neural network for this problem'''
-		network = neuralnet.NeuralNetwork()
-		for i in range(len(ARCHITECTURE) - 1):
-			network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1]))
-		network.compile()
-		if chromosome is not None:
-			network.set_params(chromosome)
-		return network
-
 	def _run_test(self, goal_position, chromosome):
 		'''Runs a single position regulation test'''
-		network = self._create_network(chromosome)
+		self.network.set_params(chromosome)
 		clock = pygame.time.Clock()
 		inputs = np.array([list(goal_position) + [0] * 3])
 		finish = False
@@ -63,7 +57,7 @@ class EV3Problem(evolution.Problem):
 		start_time = pygame.time.get_ticks()
 		while not finish:
 			inputs[0][3:] = self.robot.read_joints()
-			outputs = np.clip(network.predict(inputs), -SPEED_CAP, SPEED_CAP)
+			outputs = np.clip(self.network.predict(inputs), -SPEED_CAP, SPEED_CAP)
 			for idx, speed in np.ndenumerate(outputs):
 				self.robot.set_motor(idx[1] + 1, float(speed))
 			# Emergency stop
