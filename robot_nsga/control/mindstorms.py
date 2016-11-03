@@ -12,7 +12,7 @@ from . import robot
 
 HEADER = b'\x01\x00\x81\x9E'
 PORT = 1
-STALL_THRESHOLD = 3
+STALL_THRESHOLD = 1
 
 class Mindstorms(robot.Robot):
 	'''Robot class for LEGO Mindstorms(TM) robots'''
