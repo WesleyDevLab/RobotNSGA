@@ -13,13 +13,14 @@ import utils
 
 
 ARCHITECTURE = [6, 20, 50, 20, 10, 3]
+GOAL_POSITIONS = [(-90, 90, 220), (90, 15, 300), (-45, 120, 45), (170, 200, 60)]
 MUTATION_PROB = 0.005
 RANDOM_MU = 0
 RANDOM_SIGMA = 0.2
 SAMPLING_FREQ = 10
 SCREEN_WIDTH = 80
 SPEED_CAP = 20
-STALL_SECONDS = 1
+STALL_SECONDS = 0.5
 TIMEOUT = 10
 
 def emergency_stop():
@@ -78,7 +79,7 @@ class EV3Problem(evolution.Problem):
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
 		output_avg = np.sum(integral / total_time)
 		print('Total time:', total_time, '\tError.', error, '\tOutput avg:', output_avg)
-		return total_time, error
+		return total_time, error, output_avg
 
 	def crossover(self, parent1, parent2):
 		total = 0
@@ -92,7 +93,17 @@ class EV3Problem(evolution.Problem):
 		return evolution.Individual(child_chromosome)
 
 	def evaluate(self, population):
-		pass
+		for individual in population:
+			results = np.zeros((4, 3))
+			for i, goal in enumerate(GOAL_POSITIONS):
+				print('Homing')
+				self.robot.home()
+				self.robot.reset()
+				results[i, :] = self._run_test(goal, individual.chromosome)
+			individual.fitness = [0, 0, 0]
+			individual.fitness[0] = np.mean(results[:, 0])
+			individual.fitness[1] = np.mean(results[:, 1])
+			individual.fitness[2] = np.sum(results[:, 2])
 
 	def generate_individual(self):
 		chromosome = [random.gauss(RANDOM_MU, RANDOM_SIGMA) for _ in range(self.n_params)]
@@ -116,10 +127,6 @@ def main(args):
 	genetic_algorithm = evolution.NSGA(problem, population_size)
 
 	_thread.start_new_thread(emergency_stop, ())
-	problem.robot.home()
-	problem.robot.reset()
-	problem._run_test((-90, 90, 220), problem.generate_individual().chromosome)
-
 	if generation > 0:
 		parents, children = utils.load_data(database)
 		genetic_algorithm.set_population(parents)
