@@ -50,6 +50,8 @@ class EV3Problem(evolution.Problem):
 		self.network.set_params(chromosome)
 		clock = pygame.time.Clock()
 		inputs = np.array([list(goal_position) + [0] * 3])
+		last_outputs = np.zeros((1, 3))
+		integral = np.zeros((1, 3))
 		finish = False
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
@@ -58,6 +60,8 @@ class EV3Problem(evolution.Problem):
 			outputs = np.clip(self.network.predict(inputs), -SPEED_CAP, SPEED_CAP)
 			for idx, speed in np.ndenumerate(outputs):
 				self.robot.set_motor(idx[1] + 1, float(speed))
+			integral += (np.absolute(outputs) + np.absolute(last_outputs)) * 1000 / (2 * SAMPLING_FREQ)
+			last_outputs = outputs
 			# Stall stop criterion
 			if self.robot.detect_stall():
 				stall_counter += 1
@@ -72,6 +76,8 @@ class EV3Problem(evolution.Problem):
 			clock.tick_busy_loop(SAMPLING_FREQ)
 		total_time = pygame.time.get_ticks() - start_time
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
+		output_avg = np.sum(integral / total_time)
+		print('Total time:', total_time, '\tError.', error, '\tOutput avg:', output_avg)
 		return total_time, error
 
 	def crossover(self, parent1, parent2):
