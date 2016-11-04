@@ -14,6 +14,7 @@ import utils
 
 ARCHITECTURE = [6, 20, 50, 20, 10, 3]
 GOAL_POSITIONS = [(-90, 90, 220), (90, 15, 300), (-45, 120, 45), (170, 200, 60)]
+HOME_THRESHOLD = 10
 MUTATION_PROB = 0.005
 RANDOM_MU = 0
 RANDOM_SIGMA = 0.2
@@ -96,6 +97,10 @@ class EV3Problem(evolution.Problem):
 		for individual in population:
 			print('Homing')
 			self.robot.home()
+			while not (np.array(self.robot.read_joints()) < HOME_THRESHOLD).all():
+				print('Homing again:', self.robot.read_joints())
+				self.robot.home()
+			print('Home accepted:', self.robot.read_joints())
 			self.robot.reset()
 			results = np.zeros((4, 3))
 			for i, goal in enumerate(GOAL_POSITIONS):
@@ -121,7 +126,7 @@ def main(args):
 	random.seed()
 	problem = EV3Problem()
 	database = utils.initialize_database(args, 'RobotTrainingData')
-	database.set_objective_names(['Error de posicion', 'Tiempo'])
+	database.set_objective_names(['Error de posicion', 'Tiempo', 'Energía'])
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
