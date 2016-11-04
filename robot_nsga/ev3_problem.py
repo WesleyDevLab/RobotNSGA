@@ -94,11 +94,11 @@ class EV3Problem(evolution.Problem):
 
 	def evaluate(self, population):
 		for individual in population:
+			print('Homing')
+			self.robot.home()
+			self.robot.reset()
 			results = np.zeros((4, 3))
 			for i, goal in enumerate(GOAL_POSITIONS):
-				print('Homing')
-				self.robot.home()
-				self.robot.reset()
 				results[i, :] = self._run_test(goal, individual.chromosome)
 			individual.fitness = [0, 0, 0]
 			individual.fitness[0] = np.mean(results[:, 0])
