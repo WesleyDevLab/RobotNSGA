@@ -1,5 +1,7 @@
 '''EV3 position regulation using neural networks'''
 
+# pylint: disable = C0301, R0914
+
 from datetime import datetime
 import random
 import _thread
@@ -119,7 +121,7 @@ class EV3Problem(evolution.Problem):
 			results = np.zeros((4, 3))
 			for i, goal in enumerate(GOAL_POSITIONS):
 				database.log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
-				database.log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * SCREEN_WIDTH - 1) + '\n')
+				database.log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
 				results[i, :] = self._run_test(goal, individual.chromosome)
 				k += increment
 				p_bar.update(k)
