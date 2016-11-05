@@ -24,6 +24,9 @@ SPEED_CAP = 40
 STALL_SECONDS = 0.5
 TIMEOUT = 10
 
+database = None
+genetic_algorithm = None
+
 def emergency_stop():
 	'''Wait for emergency stop keystroke'''
 	input()
@@ -110,6 +113,7 @@ class EV3Problem(evolution.Problem):
 			individual.fitness[0] = np.mean(results[:, 0])
 			individual.fitness[1] = np.mean(results[:, 1])
 			individual.fitness[2] = np.sum(results[:, 2])
+			utils.save_data(genetic_algorithm, database)
 
 	def generate_individual(self):
 		chromosome = [random.gauss(RANDOM_MU, RANDOM_SIGMA) for _ in range(self.n_params)]
@@ -123,6 +127,8 @@ class EV3Problem(evolution.Problem):
 
 def main(args):
 	'''Module main function'''
+	global database
+	global genetic_algorithm
 	pygame.init()
 	random.seed()
 	database = utils.initialize_database(args, 'RobotTrainingData')
@@ -139,8 +145,8 @@ def main(args):
 		genetic_algorithm.set_children(children)
 	for _ in range(args.iterations):
 		generation += 1
+		database.create_population()
 		print('Starting generation ' + str(generation))
 		genetic_algorithm.iterate()
-		database.create_population()
 		utils.save_data(genetic_algorithm, database)
 		print('=' * (SCREEN_WIDTH - 1))
