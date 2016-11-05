@@ -1,5 +1,6 @@
 '''EV3 position regulation using neural networks'''
 
+from datetime import datetime
 import random
 import _thread
 
@@ -77,6 +78,9 @@ class EV3Problem(evolution.Problem):
 			# Timeout stop criterion
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
 				finish = True
+			database.log(str(inputs[0, 3:]) + '\t' +
+				str(np.around(outputs, 2)) + '\t' +
+				str(clock.get_rawtime()) + '\n')
 			clock.tick_busy_loop(SAMPLING_FREQ)
 		total_time = pygame.time.get_ticks() - start_time
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
@@ -96,16 +100,24 @@ class EV3Problem(evolution.Problem):
 
 	def evaluate(self, population):
 		print('Evaluating')
+		database.log(('{:=^' + str(SCREEN_WIDTH - 1) + '}\n').format('MINDSTORMS ROBOT TESTING LOG'))
+		database.log(('{:^' + str(SCREEN_WIDTH) + '}\n').format('Created on ' + str(datetime.now())))
 		p_bar = utils.ProgressBar(SCREEN_WIDTH)
 		increment = 100.0 / (population.size() * 4)
 		k = 0
 		for individual in population:
+			database.log('\n\nTesting individual: ' + individual.name + '\n')
 			self.robot.home()
+			attempts = 1
 			while not (np.array(self.robot.read_joints()) < HOME_THRESHOLD).all():
+				attempts += 1
 				self.robot.home()
 			self.robot.reset()
+			database.log('Attempted homing ' + str(attempts) + ' times.')
 			results = np.zeros((4, 3))
 			for i, goal in enumerate(GOAL_POSITIONS):
+				database.log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
+				database.log('Robot pos.\t\tControl signal\t\tSample time\n' + ('-' * SCREEN_WIDTH) + '\n')
 				results[i, :] = self._run_test(goal, individual.chromosome)
 				k += increment
 				p_bar.update(k)
