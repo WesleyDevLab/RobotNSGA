@@ -7,6 +7,7 @@ import shutil
 
 DATA_DIRECTORY = 'data'
 ID_PREFIX = 'id_'
+LOG_DIRECTORY = 'logs'
 PROPERTIES_FILE = 'Properties.json'
 REPORT_DIRECTORY = 'reports'
 
@@ -49,6 +50,8 @@ class Database:
 			self._load_properties()
 		if not os.path.exists(os.path.join(self.directory, DATA_DIRECTORY)):
 			os.mkdir(os.path.join(self.directory, DATA_DIRECTORY))
+		if not os.path.exists(os.path.join(self.directory, LOG_DIRECTORY)):
+			os.mkdir(os.path.join(self.directory, LOG_DIRECTORY))
 		if not os.path.exists(os.path.join(self.directory, REPORT_DIRECTORY)):
 			os.mkdir(os.path.join(self.directory, REPORT_DIRECTORY))
 
@@ -81,6 +84,11 @@ class Database:
 		'''Creates a new population after the last one and sets it as selected'''
 		self.set_property('highest_population', self.properties['highest_population'] + 1)
 		self.select()
+
+	def get_log_filename(self):
+		'''Returns the appropriate filename for opening a log'''
+		return os.path.join(self.directory, LOG_DIRECTORY,
+			str(self.properties['highest_population']) + '.log')
 
 	def load(self):
 		'''Returns a dictionary of all elements in the selected population as binary strings'''
@@ -130,7 +138,7 @@ class Database:
 		'''
 		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected) + '.json')
 		with open(path, 'wt') as out_file:
-			json.dump(report, out_file, indent='\t')
+			json.dump(report, out_file, indent='\t', sort_keys=True)
 
 	def select(self, index=-1):
 		'''Sets the given population as the one to load from and save to
