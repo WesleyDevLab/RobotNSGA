@@ -20,7 +20,7 @@ RANDOM_MU = 0
 RANDOM_SIGMA = 0.2
 SAMPLING_FREQ = 10
 SCREEN_WIDTH = 80
-SPEED_CAP = 20
+SPEED_CAP = 40
 STALL_SECONDS = 0.5
 TIMEOUT = 10
 
@@ -74,12 +74,10 @@ class EV3Problem(evolution.Problem):
 			# Timeout stop criterion
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
 				finish = True
-			print(self.robot.joints, outputs, clock.get_rawtime(), sep='\t')
 			clock.tick_busy_loop(SAMPLING_FREQ)
 		total_time = pygame.time.get_ticks() - start_time
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
 		output_avg = np.sum(integral / total_time)
-		print('Total time:', total_time, '\tError.', error, '\tOutput avg:', output_avg)
 		return total_time, error, output_avg
 
 	def crossover(self, parent1, parent2):
@@ -94,17 +92,20 @@ class EV3Problem(evolution.Problem):
 		return evolution.Individual(child_chromosome)
 
 	def evaluate(self, population):
+		print('Evaluating')
+		p_bar = utils.ProgressBar(SCREEN_WIDTH)
+		increment = 100.0 / (population.size() * 4)
+		k = 0
 		for individual in population:
-			print('Homing')
 			self.robot.home()
 			while not (np.array(self.robot.read_joints()) < HOME_THRESHOLD).all():
-				print('Homing again:', self.robot.read_joints())
 				self.robot.home()
-			print('Home accepted:', self.robot.read_joints())
 			self.robot.reset()
 			results = np.zeros((4, 3))
 			for i, goal in enumerate(GOAL_POSITIONS):
 				results[i, :] = self._run_test(goal, individual.chromosome)
+				k += increment
+				p_bar.update(k)
 			individual.fitness = [0, 0, 0]
 			individual.fitness[0] = np.mean(results[:, 0])
 			individual.fitness[1] = np.mean(results[:, 1])
@@ -124,9 +125,9 @@ def main(args):
 	'''Module main function'''
 	pygame.init()
 	random.seed()
-	problem = EV3Problem()
 	database = utils.initialize_database(args, 'RobotTrainingData')
 	database.set_objective_names(['Error de posicion', 'Tiempo', 'Energía'])
+	problem = EV3Problem()
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
