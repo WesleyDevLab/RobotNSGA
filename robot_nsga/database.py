@@ -40,6 +40,7 @@ class Database:
 		The directory should not contain any other data than the database, as it may be deleted.
 		'''
 		self.directory = os.path.abspath(directory)
+		self.log_file = None
 		self.properties = {}
 		self.selected = 0
 		if not os.path.exists(self.directory):
@@ -54,6 +55,11 @@ class Database:
 			os.mkdir(os.path.join(self.directory, LOG_DIRECTORY))
 		if not os.path.exists(os.path.join(self.directory, REPORT_DIRECTORY)):
 			os.mkdir(os.path.join(self.directory, REPORT_DIRECTORY))
+
+	def __del__(self):
+		if self.log_file is not None:
+			self.log_file.close()
+			self.log_file = None
 
 	def _save_properties(self):
 		'''Saves the database properties to the PROPERTIES_FILE'''
@@ -150,6 +156,7 @@ class Database:
 		if index < 0:
 			index = self.properties['highest_population']
 		self.selected = index
+		self.log_file = open(os.path.join(self.directory, LOG_DIRECTORY, str(self.selected)+'.log'), 'a')
 
 	def set_objective_names(self, names):
 		'''Sets the text to be used in graphs for each objective'''
