@@ -114,6 +114,11 @@ class Database:
 			report = json.load(in_file)
 		return report
 
+	def log(self, string):
+		'''Writes the given string to the current log file'''
+		if self.log_file is not None:
+			self.log_file.write(string)
+
 	def reset(self):
 		'''Deletes all data in the database and restores the properties to their default values'''
 		shutil.rmtree(self.directory)
