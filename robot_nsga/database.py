@@ -91,11 +91,6 @@ class Database:
 		self.set_property('highest_population', self.properties['highest_population'] + 1)
 		self.select()
 
-	def get_log_filename(self):
-		'''Returns the appropriate filename for opening a log'''
-		return os.path.join(self.directory, LOG_DIRECTORY,
-			str(self.properties['highest_population']) + '.log')
-
 	def load(self):
 		'''Returns a dictionary of all elements in the selected population as binary strings'''
 		id_path = os.path.join(self.directory, ID_PREFIX + str(self.selected))
