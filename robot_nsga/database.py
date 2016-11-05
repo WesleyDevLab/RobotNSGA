@@ -138,7 +138,7 @@ class Database:
 		'''
 		path = os.path.join(self.directory, REPORT_DIRECTORY, str(self.selected) + '.json')
 		with open(path, 'wt') as out_file:
-			json.dump(report, out_file, indent='\t')
+			json.dump(report, out_file, indent='\t', sort_keys=True)
 
 	def select(self, index=-1):
 		'''Sets the given population as the one to load from and save to
