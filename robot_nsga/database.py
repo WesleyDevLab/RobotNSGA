@@ -40,6 +40,7 @@ class Database:
 		The directory should not contain any other data than the database, as it may be deleted.
 		'''
 		self.directory = os.path.abspath(directory)
+		self.log_file = None
 		self.properties = {}
 		self.selected = 0
 		if not os.path.exists(self.directory):
@@ -54,6 +55,11 @@ class Database:
 			os.mkdir(os.path.join(self.directory, LOG_DIRECTORY))
 		if not os.path.exists(os.path.join(self.directory, REPORT_DIRECTORY)):
 			os.mkdir(os.path.join(self.directory, REPORT_DIRECTORY))
+
+	def __del__(self):
+		if self.log_file is not None:
+			self.log_file.close()
+			self.log_file = None
 
 	def _save_properties(self):
 		'''Saves the database properties to the PROPERTIES_FILE'''
@@ -85,11 +91,6 @@ class Database:
 		self.set_property('highest_population', self.properties['highest_population'] + 1)
 		self.select()
 
-	def get_log_filename(self):
-		'''Returns the appropriate filename for opening a log'''
-		return os.path.join(self.directory, LOG_DIRECTORY,
-			str(self.properties['highest_population']) + '.log')
-
 	def load(self):
 		'''Returns a dictionary of all elements in the selected population as binary strings'''
 		id_path = os.path.join(self.directory, ID_PREFIX + str(self.selected))
@@ -107,6 +108,11 @@ class Database:
 		with open(path, 'rt') as in_file:
 			report = json.load(in_file)
 		return report
+
+	def log(self, string):
+		'''Writes the given string to the current log file'''
+		if self.log_file is not None:
+			self.log_file.write(string)
 
 	def reset(self):
 		'''Deletes all data in the database and restores the properties to their default values'''
@@ -150,6 +156,7 @@ class Database:
 		if index < 0:
 			index = self.properties['highest_population']
 		self.selected = index
+		self.log_file = open(os.path.join(self.directory, LOG_DIRECTORY, str(self.selected)+'.log'), 'a')
 
 	def set_objective_names(self, names):
 		'''Sets the text to be used in graphs for each objective'''
