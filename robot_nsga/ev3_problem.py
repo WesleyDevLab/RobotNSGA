@@ -20,7 +20,7 @@ MUTATION_PROB = 0.005
 RANDOM_MU = 0
 RANDOM_SIGMA = 0.2
 SAMPLING_FREQ = 10
-SCREEN_WIDTH = 80
+SCREEN_WIDTH = 120
 SPEED_CAP = 40
 STALL_SECONDS = 0.5
 TIMEOUT = 10
@@ -85,6 +85,8 @@ class EV3Problem(evolution.Problem):
 		total_time = pygame.time.get_ticks() - start_time
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
 		output_avg = np.sum(integral / total_time)
+		database.log('Test finished. Total time: {}\tFinal position: ({:.2f}, {:.2f}, {:.2f})\tEnergy avg: {:.2f}'.format(
+			total_time, *self.robot.direct_kinematics(), output_avg))
 		return total_time, error, output_avg
 
 	def crossover(self, parent1, parent2):
@@ -101,8 +103,8 @@ class EV3Problem(evolution.Problem):
 	def evaluate(self, population):
 		print('Evaluating')
 		database.log(('{:=^' + str(SCREEN_WIDTH - 1) + '}\n').format('MINDSTORMS ROBOT TESTING LOG'))
-		database.log(('{:^' + str(SCREEN_WIDTH) + '}\n').format('Created on ' + str(datetime.now())))
-		p_bar = utils.ProgressBar(SCREEN_WIDTH)
+		database.log(('{:^' + str(SCREEN_WIDTH - 1) + '}\n').format('Created on ' + str(datetime.now())))
+		p_bar = utils.ProgressBar(SCREEN_WIDTH - 1)
 		increment = 100.0 / (population.size() * 4)
 		k = 0
 		for individual in population:
@@ -117,7 +119,7 @@ class EV3Problem(evolution.Problem):
 			results = np.zeros((4, 3))
 			for i, goal in enumerate(GOAL_POSITIONS):
 				database.log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
-				database.log('Robot pos.\t\tControl signal\t\tSample time\n' + ('-' * SCREEN_WIDTH) + '\n')
+				database.log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * SCREEN_WIDTH - 1) + '\n')
 				results[i, :] = self._run_test(goal, individual.chromosome)
 				k += increment
 				p_bar.update(k)
@@ -126,6 +128,7 @@ class EV3Problem(evolution.Problem):
 			individual.fitness[1] = np.mean(results[:, 1])
 			individual.fitness[2] = np.sum(results[:, 2])
 			utils.save_data(genetic_algorithm, database)
+			database.log('\n\nFitness calculated for {}: {}\n'.format(individual.name, individual.fitness))
 
 	def generate_individual(self):
 		chromosome = [random.gauss(RANDOM_MU, RANDOM_SIGMA) for _ in range(self.n_params)]
