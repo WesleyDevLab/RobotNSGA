@@ -107,9 +107,12 @@ class EV3Problem(evolution.Problem):
 		database.log(('{:=^' + str(SCREEN_WIDTH - 1) + '}\n').format('MINDSTORMS ROBOT TESTING LOG'))
 		database.log(('{:^' + str(SCREEN_WIDTH - 1) + '}\n').format('Created on ' + str(datetime.now())))
 		p_bar = utils.ProgressBar(SCREEN_WIDTH - 1)
-		increment = 100.0 / (population.size() * 4)
+		increment = 100.0 / (population.size() * len(GOAL_POSITIONS))
 		k = 0
 		for individual in population:
+			if individual.fitness:
+				k += increment * len(GOAL_POSITIONS)
+				continue
 			database.log('\n\nTesting individual: ' + individual.name + '\n')
 			self.robot.home()
 			attempts = 1
