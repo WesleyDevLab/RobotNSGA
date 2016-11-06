@@ -55,6 +55,7 @@ class EV3Problem(evolution.Problem):
 		last_outputs = np.zeros((1, 3))
 		integral = np.zeros((1, 3))
 		finish = False
+		timeout = False
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
 		while not finish:
@@ -73,12 +74,15 @@ class EV3Problem(evolution.Problem):
 				finish = True
 			# Timeout stop criterion
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
+				timeout = True
 				finish = True
 			database.log(str(inputs[0, 3:]) + '\t' +
 				str(np.around(outputs, 2)) + '\t' +
 				str(clock.get_rawtime()) + '\n')
 			clock.tick_busy_loop(SAMPLING_FREQ)
 		total_time = pygame.time.get_ticks() - start_time
+		if timeout:
+			total_time = float('inf')
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
 		output_avg = np.sum(integral / total_time)
 		database.log('Test finished. Total time: {}\tFinal position: ({:.2f}, {:.2f}, {:.2f})\tEnergy avg: {:.2f}'.format(
