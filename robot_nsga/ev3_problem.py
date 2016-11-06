@@ -4,7 +4,6 @@
 
 from datetime import datetime
 import random
-import _thread
 
 import pygame
 import numpy as np
@@ -29,11 +28,6 @@ TIMEOUT = 10
 
 database = None
 genetic_algorithm = None
-
-def emergency_stop():
-	'''Wait for emergency stop keystroke'''
-	input()
-	_thread.interrupt_main()
 
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
@@ -158,7 +152,6 @@ def main(args):
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
 
-	_thread.start_new_thread(emergency_stop, ())
 	if generation > 0:
 		parents, children = utils.load_data(database)
 		genetic_algorithm.set_population(parents)
