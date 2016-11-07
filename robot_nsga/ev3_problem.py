@@ -5,8 +5,9 @@
 from datetime import datetime
 import random
 
-import pygame
 import numpy as np
+import pygame
+import theano.tensor as T
 
 import control
 import evolution
@@ -19,7 +20,7 @@ GOAL_POSITIONS = [(-90, 90, 220), (90, 15, 300), (-45, 120, 45), (170, 200, 60)]
 HOME_THRESHOLD = 10
 MUTATION_PROB = 0.005
 RANDOM_MU = 0
-RANDOM_SIGMA = 0.2
+RANDOM_SIGMA = 0.25
 SAMPLING_FREQ = 10
 SCREEN_WIDTH = 120
 SPEED_CAP = 40
@@ -40,8 +41,9 @@ class EV3Problem(evolution.Problem):
 			self.neuron_lengths += [ARCHITECTURE[i - 1] + 1] * ARCHITECTURE[i]
 		self.n_params = sum(self.neuron_lengths)
 		self.network = neuralnet.NeuralNetwork()
-		for i in range(len(ARCHITECTURE) - 1):
-			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1]))
+		for i in range(len(ARCHITECTURE) - 2):
+			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1], T.nnet.nnet.relu))
+		self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[-2], ARCHITECTURE[-1]))
 		self.network.compile()
 
 	def __del__(self):
