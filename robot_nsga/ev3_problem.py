@@ -33,7 +33,7 @@ genetic_algorithm = None
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
 
-	def __init__(self):
+	def __init__(self, log_to_file=True):
 		self.robot = control.Mindstorms()
 		self.robot.connect()
 		self.neuron_lengths = []
@@ -45,12 +45,17 @@ class EV3Problem(evolution.Problem):
 			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1], T.nnet.nnet.relu))
 		self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[-2], ARCHITECTURE[-1]))
 		self.network.compile()
+		self.log_to_file = log_to_file
 
 	def __del__(self):
 		self.robot.disconnect()
 
 	def _run_test(self, goal_position, chromosome):
 		'''Runs a single position regulation test'''
+		if self.log_to_file:
+			log = database.log
+		else:
+			log = print
 		self.network.set_params(chromosome)
 		clock = pygame.time.Clock()
 		inputs = np.array([list(goal_position) + [0] * 3])
@@ -78,7 +83,7 @@ class EV3Problem(evolution.Problem):
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
 				timeout = True
 				finish = True
-			database.log(str(inputs[0, 3:]) + '\t' +
+			log(str(inputs[0, 3:]) + '\t' +
 				str(np.around(outputs, 2)) + '\t' +
 				str(clock.get_rawtime()) + '\n')
 			clock.tick_busy_loop(SAMPLING_FREQ)
@@ -87,7 +92,7 @@ class EV3Problem(evolution.Problem):
 			total_time = float('inf')
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
 		output_avg = np.sum(integral / total_time)
-		database.log('Test finished. Total time: {}\tFinal position: ({:.2f}, {:.2f}, {:.2f})\tEnergy avg: {:.2f}'.format(
+		log('Test finished. Total time: {}\tFinal position: ({:.2f}, {:.2f}, {:.2f})\tEnergy avg: {:.2f}'.format(
 			total_time, *self.robot.direct_kinematics(), output_avg))
 		return total_time, error, output_avg
 
@@ -103,34 +108,39 @@ class EV3Problem(evolution.Problem):
 		return evolution.Individual(child_chromosome)
 
 	def evaluate(self, population):
+		if self.log_to_file:
+			log = database.log
+			p_bar = utils.ProgressBar(SCREEN_WIDTH - 1)
+		else:
+			log = print
 		print('Evaluating')
-		database.log(('{:=^' + str(SCREEN_WIDTH - 1) + '}\n').format('MINDSTORMS ROBOT TESTING LOG'))
-		database.log(('{:^' + str(SCREEN_WIDTH - 1) + '}\n').format('Created on ' + str(datetime.now())))
-		p_bar = utils.ProgressBar(SCREEN_WIDTH - 1)
+		log(('{:=^' + str(SCREEN_WIDTH - 1) + '}\n').format('MINDSTORMS ROBOT TESTING LOG'))
+		log(('{:^' + str(SCREEN_WIDTH - 1) + '}\n').format('Created on ' + str(datetime.now())))
 		increment = 100.0 / (population.size() * len(GOAL_POSITIONS))
 		k = 0
 		for individual in population:
 			if individual.fitness:
 				k += increment * len(GOAL_POSITIONS)
 				continue
-			database.log('\n\nTesting individual: ' + individual.name + '\n')
+			log('\n\nTesting individual: ' + individual.name + '\n')
 			self.robot.home()
 			attempts = 1
 			while not (np.array(self.robot.read_joints()) < HOME_THRESHOLD).all():
 				attempts += 1
 				self.robot.home()
 			self.robot.reset()
-			database.log('Attempted homing ' + str(attempts) + ' times.')
+			log('Attempted homing ' + str(attempts) + ' times.')
 			results = np.zeros((4, 3))
 			for i, goal in enumerate(GOAL_POSITIONS):
-				database.log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
-				database.log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
+				log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
+				log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
 				results[i, :] = self._run_test(goal, individual.chromosome)
 				k += increment
-				p_bar.update(k)
+				if self.log_to_file:
+					p_bar.update(k)
 			individual.fitness = np.mean(results, 0).tolist()
 			utils.save_data(genetic_algorithm, database)
-			database.log('\n\nFitness calculated for {}: {}\n'.format(individual.name, individual.fitness))
+			log('\n\nFitness calculated for {}: {}\n'.format(individual.name, individual.fitness))
 
 	def generate_individual(self):
 		chromosome = [random.gauss(RANDOM_MU, RANDOM_SIGMA) for _ in range(self.n_params)]
