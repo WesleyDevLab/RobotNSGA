@@ -37,7 +37,7 @@ def main():
 	evolution_parser.set_defaults(iterations=1)
 
 	# EV3 problem
-	ev3_parser = subparsers.add_parser('ev3',
+	ev3_parser = subparsers.add_parser('train',
 		description='EV3 position regulation using neural networks',
 		help='Train EV3 robot',
 		parents=[evolution_parser])
