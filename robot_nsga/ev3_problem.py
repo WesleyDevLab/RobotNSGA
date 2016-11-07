@@ -128,10 +128,7 @@ class EV3Problem(evolution.Problem):
 				results[i, :] = self._run_test(goal, individual.chromosome)
 				k += increment
 				p_bar.update(k)
-			individual.fitness = [0, 0, 0]
-			individual.fitness[0] = np.mean(results[:, 0])
-			individual.fitness[1] = np.mean(results[:, 1])
-			individual.fitness[2] = np.sum(results[:, 2])
+			individual.fitness = np.mean(results, 0).tolist()
 			utils.save_data(genetic_algorithm, database)
 			database.log('\n\nFitness calculated for {}: {}\n'.format(individual.name, individual.fitness))
 
