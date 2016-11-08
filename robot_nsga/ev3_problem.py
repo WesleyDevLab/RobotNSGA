@@ -108,12 +108,12 @@ class EV3Problem(evolution.Problem):
 		return evolution.Individual(child_chromosome)
 
 	def evaluate(self, population):
+		print('Evaluating')
 		if self.log_to_file:
 			log = database.log
 			p_bar = utils.ProgressBar(SCREEN_WIDTH - 1)
 		else:
 			log = print
-		print('Evaluating')
 		log(('{:=^' + str(SCREEN_WIDTH - 1) + '}\n').format('MINDSTORMS ROBOT TESTING LOG'))
 		log(('{:^' + str(SCREEN_WIDTH - 1) + '}\n').format('Created on ' + str(datetime.now())))
 		increment = 100.0 / (population.size() * len(GOAL_POSITIONS))
