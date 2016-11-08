@@ -3,10 +3,12 @@
 # pylint: disable = C0301, R0914
 
 from datetime import datetime
+import os
 import random
 
 import numpy as np
 import pygame
+import pkg_resources
 import theano.tensor as T
 
 import control
@@ -16,9 +18,9 @@ import utils
 
 
 ARCHITECTURE = [6, 20, 50, 20, 10, 3]
-GOAL_POSITIONS = [(-90, 90, 220), (90, 15, 300), (-50, 135, 70), (150, 180, 80)]
 HOME_THRESHOLD = 10
 MUTATION_PROB = 0.005
+N_GOALS = 8
 RANDOM_MU = 0
 RANDOM_SIGMA = 0.25
 SAMPLING_FREQ = 10
@@ -29,6 +31,7 @@ TIMEOUT = 10
 
 database = None
 genetic_algorithm = None
+goal_positions = None
 
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
@@ -58,7 +61,7 @@ class EV3Problem(evolution.Problem):
 			log = print
 		self.network.set_params(chromosome)
 		clock = pygame.time.Clock()
-		inputs = np.array([list(goal_position) + [0] * 3])
+		inputs = np.expand_dims(np.append(goal_position, [0] * 3), axis=0)
 		last_outputs = np.zeros((1, 3))
 		integral = np.zeros((1, 3))
 		finish = False
@@ -66,7 +69,7 @@ class EV3Problem(evolution.Problem):
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
 		while not finish:
-			inputs[0][3:] = self.robot.read_joints()
+			inputs[0, 3:] = self.robot.read_joints()
 			outputs = np.clip(self.network.predict(inputs), -SPEED_CAP, SPEED_CAP)
 			for idx, speed in np.ndenumerate(outputs):
 				self.robot.set_motor(idx[1] + 1, float(speed))
@@ -116,11 +119,11 @@ class EV3Problem(evolution.Problem):
 			log = print
 		log(('{:=^' + str(SCREEN_WIDTH - 1) + '}\n').format('MINDSTORMS ROBOT TESTING LOG'))
 		log(('{:^' + str(SCREEN_WIDTH - 1) + '}\n').format('Created on ' + str(datetime.now())))
-		increment = 100.0 / (population.size() * len(GOAL_POSITIONS))
+		increment = 100.0 / (population.size() * goal_positions.shape[0])
 		k = 0
 		for individual in population:
 			if individual.fitness:
-				k += increment * len(GOAL_POSITIONS)
+				k += increment * goal_positions.shape[0]
 				continue
 			log('\n\nTesting individual: ' + individual.name + '\n')
 			self.robot.home()
@@ -130,8 +133,8 @@ class EV3Problem(evolution.Problem):
 				self.robot.home()
 			self.robot.reset()
 			log('Attempted homing ' + str(attempts) + ' times.')
-			results = np.zeros((4, 3))
-			for i, goal in enumerate(GOAL_POSITIONS):
+			results = np.zeros((goal_positions.shape[0], 3))
+			for i, goal in enumerate(goal_positions):
 				log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
 				log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
 				results[i, :] = self._run_test(goal, individual.chromosome)
@@ -156,6 +159,7 @@ def main(args):
 	'''Module main function'''
 	global database
 	global genetic_algorithm
+	global goal_positions
 	pygame.init()
 	random.seed()
 	database = utils.initialize_database(args, 'RobotTrainingData')
@@ -164,6 +168,9 @@ def main(args):
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
+
+	res_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'training_set.txt'))
+	goal_positions = np.loadtxt(res_path)[:N_GOALS, :]
 
 	if generation > 0:
 		parents, children = utils.load_data(database)
