@@ -36,13 +36,24 @@ def main():
 	evolution_parser.add_argument('-s', '--size', type=int, help='population size')
 	evolution_parser.set_defaults(iterations=1)
 
-	# EV3 problem
-	ev3_parser = subparsers.add_parser('train',
+	# EV3 training
+	ev3_training = subparsers.add_parser('train',
 		description='EV3 position regulation using neural networks',
 		help='Train EV3 robot',
 		parents=[evolution_parser])
-	ev3_parser.set_defaults(
+	ev3_training.set_defaults(
 		func=ev3_problem.main
+		)
+
+	# EV3 testing
+	ev3_testing = subparsers.add_parser('test',
+		description='Test an EV3 position controller',
+		help='Test EV3 robot',
+		parents=[evolution_parser])
+	ev3_testing.add_argument('generation', type=int, help='Generation to load from')
+	ev3_testing.add_argument('individual', type=int, help='Number of the individual to test')
+	ev3_testing.set_defaults(
+		func=ev3_problem.test
 		)
 
 	# Math problem

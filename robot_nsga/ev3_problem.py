@@ -171,7 +171,8 @@ def test(args):
 	goal_positions = np.loadtxt(res_path)
 
 	database.select(args.generation)
-	chromosome = database.load()['I' + str(args.individual)]
+	chromosome = np.fromstring(database.load()['I' + str(args.individual)]).tolist()
+	problem.robot.home()
 	for goal in goal_positions:
 		problem.run_test(goal, chromosome)
 
