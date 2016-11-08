@@ -15,6 +15,7 @@ import control
 import evolution
 import neuralnet
 import utils
+from database import Database
 
 
 ARCHITECTURE = [6, 20, 50, 20, 10, 3]
@@ -53,7 +54,7 @@ class EV3Problem(evolution.Problem):
 	def __del__(self):
 		self.robot.disconnect()
 
-	def _run_test(self, goal_position, chromosome):
+	def run_test(self, goal_position, chromosome):
 		'''Runs a single position regulation test'''
 		if self.log_to_file:
 			log = database.log
@@ -137,7 +138,7 @@ class EV3Problem(evolution.Problem):
 			for i, goal in enumerate(goal_positions):
 				log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
 				log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
-				results[i, :] = self._run_test(goal, individual.chromosome)
+				results[i, :] = self.run_test(goal, individual.chromosome)
 				k += increment
 				if self.log_to_file:
 					p_bar.update(k)
@@ -153,6 +154,26 @@ class EV3Problem(evolution.Problem):
 		for i in range(len(individual.chromosome)):
 			if random.random() < MUTATION_PROB:
 				individual.chromosome[i] = random.gauss(RANDOM_MU, RANDOM_SIGMA)
+
+
+def test(args):
+	'''Runs a single test, using a prevously generated individual'''
+	global database
+	global goal_positions
+	pygame.init()
+	random.seed()
+	if args.database is None:
+		args.database = 'RobotTrainingData'
+	database = Database(args.database)
+	problem = EV3Problem(log_to_file=False)
+
+	res_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'test_set.txt'))
+	goal_positions = np.loadtxt(res_path)
+
+	database.select(args.generation)
+	chromosome = database.load()['I' + str(args.individual)]
+	for goal in goal_positions:
+		problem.run_test(goal, chromosome)
 
 
 def main(args):
