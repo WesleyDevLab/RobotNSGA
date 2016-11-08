@@ -112,7 +112,8 @@ class Database:
 	def log(self, string):
 		'''Writes the given string to the current log file'''
 		if self.log_file is not None:
-			self.log_file.write(string)
+			self.log_file = open(os.path.join(self.directory, LOG_DIRECTORY, str(self.selected) + '.log'))
+		self.log_file.write(string)
 
 	def reset(self):
 		'''Deletes all data in the database and restores the properties to their default values'''
@@ -156,7 +157,9 @@ class Database:
 		if index < 0:
 			index = self.properties['highest_population']
 		self.selected = index
-		self.log_file = open(os.path.join(self.directory, LOG_DIRECTORY, str(self.selected)+'.log'), 'a')
+		if self.log_file is not None:
+			self.log_file.close()
+			self.log_file = None
 
 	def set_objective_names(self, names):
 		'''Sets the text to be used in graphs for each objective'''
