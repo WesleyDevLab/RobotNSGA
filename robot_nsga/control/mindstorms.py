@@ -67,8 +67,8 @@ class Mindstorms(robot.Robot):
 		Returns a logical array indicating which joints are software limited, depending on the current
 		robot position and the control signal provided.
 		'''
-		lower_bound = (self.joints <= 0) & (signal < 0)
-		upper_bound = (self.joints >= np.array(JOINT_LIMITS)) & (signal > 0)
+		lower_bound = (np.asarray(self.joints) <= 0) & (signal < 0)
+		upper_bound = (np.asarray(self.joints) >= np.array(JOINT_LIMITS)) & (signal > 0)
 		return lower_bound | upper_bound
 
 	def detect_stall(self):
