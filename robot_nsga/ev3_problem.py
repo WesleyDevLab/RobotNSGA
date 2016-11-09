@@ -82,6 +82,8 @@ class EV3Problem(evolution.Problem):
 			else:
 				stall_counter = 0
 			if stall_counter >= STALL_SECONDS * SAMPLING_FREQ:
+				if self.robot.detect_soft_limits(outputs.flatten()).any():
+					timeout = True
 				finish = True
 			# Timeout stop criterion
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
