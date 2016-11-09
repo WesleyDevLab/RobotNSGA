@@ -21,7 +21,7 @@ from database import Database
 ARCHITECTURE = [6, 20, 50, 20, 10, 3]
 HOME_THRESHOLD = 10
 MUTATION_PROB = 0.005
-N_GOALS = 8
+N_GOALS = 1
 RANDOM_MU = 0
 RANDOM_SIGMA = 0.25
 SAMPLING_FREQ = 10
@@ -101,14 +101,15 @@ class EV3Problem(evolution.Problem):
 		return total_time, error, output_avg
 
 	def crossover(self, parent1, parent2):
-		total = 0
 		child_chromosome = []
-		for i in self.neuron_lengths:
-			if random.random() < 0.5:
-				child_chromosome += parent1.chromosome[total : total + i]
-			else:
-				child_chromosome += parent2.chromosome[total : total + i]
-			total += i
+		counter = 0
+		for i in range(len(ARCHITECTURE) - 1):
+			positions = np.random.randint(ARCHITECTURE[i + 1], size=ARCHITECTURE[i + 1])
+			for pos in positions:
+				start = counter + (ARCHITECTURE[i] + 1) * pos
+				parent_from = random.choice([parent1, parent2])
+				child_chromosome += parent_from.chromosome[start : start + ARCHITECTURE[i] + 1]
+			counter += (ARCHITECTURE[i] + 1) * ARCHITECTURE[i + 1]
 		return evolution.Individual(child_chromosome)
 
 	def evaluate(self, population):
@@ -162,6 +163,7 @@ def test(args):
 	global goal_positions
 	pygame.init()
 	random.seed()
+	np.random.seed()
 	if args.database is None:
 		args.database = 'RobotTrainingData'
 	database = Database(args.database)
