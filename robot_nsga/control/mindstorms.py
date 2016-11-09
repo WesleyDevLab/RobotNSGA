@@ -11,6 +11,7 @@ import numpy as np
 from . import robot
 
 HEADER = b'\x01\x00\x81\x9E'
+JOINT_LIMITS = [180, 120, 120]
 PORT = 1
 STALL_THRESHOLD = 1
 
@@ -60,6 +61,15 @@ class Mindstorms(robot.Robot):
 		print('Waiting for EV3 to connect')
 		self.client_socket, _ = self.server_socket.accept()
 		print('EV3 connected')
+
+	def detect_soft_limits(self, signal):
+		'''
+		Returns a logical array indicating which joints are software limited, depending on the current
+		robot position and the control signal provided.
+		'''
+		lower_bound = (self.joints <= 0) & (signal < 0)
+		upper_bound = (self.joints >= np.array(JOINT_LIMITS)) & (signal > 0)
+		return lower_bound | upper_bound
 
 	def detect_stall(self):
 		'''Returns True if the robot did not move since the last call'''
