@@ -144,7 +144,6 @@ class EV3Problem(evolution.Problem):
 				if self.log_to_file:
 					p_bar.update(k)
 			individual.fitness = np.mean(results, 0).tolist()
-			utils.save_data(genetic_algorithm, database)
 			log('\n\nFitness calculated for {}: {}\n'.format(individual.name, individual.fitness))
 
 	def generate_individual(self):
