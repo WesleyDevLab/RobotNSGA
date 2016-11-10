@@ -94,10 +94,10 @@ class EV3Problem(evolution.Problem):
 				str(clock.get_rawtime()) + '\n')
 			clock.tick_busy_loop(SAMPLING_FREQ)
 		total_time = pygame.time.get_ticks() - start_time
+		output_avg = np.sum(integral) / total_time
 		if timeout:
 			total_time = float('inf')
 		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
-		output_avg = np.sum(integral / total_time)
 		log('Test finished. Total time: {}\tFinal position: ({:.2f}, {:.2f}, {:.2f})\tEnergy avg: {:.2f}'.format(
 			total_time, *self.robot.direct_kinematics(), output_avg))
 		return total_time, error, output_avg
