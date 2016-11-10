@@ -112,7 +112,7 @@ class Database:
 	def log(self, string):
 		'''Writes the given string to the current log file'''
 		if self.log_file is None:
-			self.log_file = open(os.path.join(self.directory, LOG_DIRECTORY, str(self.selected) + '.log'), 'w')
+			self.log_file = open(os.path.join(self.directory, LOG_DIRECTORY, str(self.selected + 1) + '.log'), 'w')
 		self.log_file.write(string)
 
 	def reset(self):
