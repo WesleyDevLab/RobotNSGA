@@ -21,7 +21,7 @@ from database import Database
 ARCHITECTURE = [6, 20, 50, 20, 10, 3]
 HOME_THRESHOLD = 10
 MUTATION_PROB = 0.005
-N_GOALS = 8
+N_GOALS = 5
 RANDOM_MU = 0
 RANDOM_SIGMA = 0.25
 SAMPLING_FREQ = 10
@@ -203,8 +203,8 @@ def main(args):
 		genetic_algorithm.set_children(children)
 	for _ in range(args.iterations):
 		generation += 1
-		database.create_population()
 		print('Starting generation ' + str(generation))
 		genetic_algorithm.iterate()
+		database.create_population()
 		utils.save_data(genetic_algorithm, database)
 		print('=' * (SCREEN_WIDTH - 1))
