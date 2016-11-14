@@ -93,14 +93,16 @@ class EV3Problem(evolution.Problem):
 				str(np.around(outputs, 2)) + '\t' +
 				str(clock.get_rawtime()) + '\n')
 			clock.tick_busy_loop(SAMPLING_FREQ)
-		total_time = pygame.time.get_ticks() - start_time
-		output_avg = np.sum(integral) / total_time
+		results = np.zeros(5)
+		results[0] = pygame.time.get_ticks() - start_time
+		results[1 : 4] = np.array(self.robot.direct_kinematics()) - np.array(goal_position)
+		results[4] = np.sum(integral) / results[0]
 		# if timeout:
 		# 	total_time = float('inf')
-		error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
+		# error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
 		log('Test finished. Total time: {}\tFinal position: ({:.2f}, {:.2f}, {:.2f})\tEnergy avg: {:.2f}'.format(
-			total_time, *self.robot.direct_kinematics(), output_avg))
-		return total_time, error, output_avg
+			results[0], *self.robot.direct_kinematics(), results[4]))
+		return results
 
 	def crossover(self, parent1, parent2):
 		child_chromosome = []
@@ -188,7 +190,7 @@ def main(args):
 	pygame.init()
 	random.seed()
 	database = utils.initialize_database(args, 'RobotTrainingData')
-	database.set_objective_names(['Error de posicion', 'Tiempo', 'Energía'])
+	database.set_objective_names(['Tiempo', 'Error en X', 'Error en Y', 'Error en Z', 'Energía'])
 	problem = EV3Problem()
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
