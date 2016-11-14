@@ -197,7 +197,8 @@ def main(args):
 	genetic_algorithm = evolution.NSGA(problem, population_size)
 
 	res_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'training_set.txt'))
-	goal_positions = np.loadtxt(res_path)[:N_GOALS, :]
+	batch_start = (generation % 10) * N_GOALS
+	goal_positions = np.loadtxt(res_path)[batch_start : batch_start + N_GOALS, :]
 
 	if generation > 0:
 		parents, children = utils.load_data(database)
