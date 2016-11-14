@@ -139,7 +139,7 @@ class EV3Problem(evolution.Problem):
 				self.robot.home()
 			self.robot.reset()
 			log('Attempted homing ' + str(attempts) + ' times.')
-			results = np.zeros((goal_positions.shape[0], 3))
+			results = np.zeros((goal_positions.shape[0], 5))
 			for i, goal in enumerate(np.random.permutation(goal_positions)):
 				log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
 				log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
