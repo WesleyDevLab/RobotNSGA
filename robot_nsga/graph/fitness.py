@@ -1,6 +1,7 @@
 '''Defines the fitness graph'''
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def fitness_graph(database, indexes=None):
@@ -12,6 +13,7 @@ def fitness_graph(database, indexes=None):
 	generations = database.properties['highest_population']
 	best_fitness = []
 	worst_fitness = []
+	avg_fitness = []
 	x_range = range(1, generations + 1)
 
 	if indexes is None:
@@ -23,13 +25,15 @@ def fitness_graph(database, indexes=None):
 	for j, idx in enumerate(indexes):
 		best_fitness = []
 		worst_fitness = []
+		avg_fitness = []
 		for i in x_range:
 			database.select(i)
 			individual_data = [val for key, val in database.load_report().items() if key.startswith('I')]
 			gen_fitness = [val['fitness'][idx] for val in individual_data]
 			best_fitness.append(min(gen_fitness))
 			worst_fitness.append(max(gen_fitness))
-		axes[j].semilogy(x_range, best_fitness, 'g', x_range, worst_fitness, 'r')
+			avg_fitness.append(np.average(np.asarray(gen_fitness)))
+		axes[j].semilogy(x_range, best_fitness, 'g', x_range, worst_fitness, 'r', x_range, avg_fitness, 'b')
 		axes[j].set_ylabel(database.properties['objective_names'][idx])
 
 	plt.suptitle('Best and worst fitness')
