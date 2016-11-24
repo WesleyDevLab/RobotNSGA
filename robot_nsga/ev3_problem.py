@@ -145,6 +145,7 @@ class EV3Problem(evolution.Problem):
 				log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
 				log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
 				results[i, :] = self.run_test(goal, individual.chromosome)
+				results[i, 1 : 4] = np.square(results[i, 1 : 4] - joint_positions[i, :])
 				k += increment
 				if self.log_to_file:
 					p_bar.update(k)
@@ -187,6 +188,7 @@ def main(args):
 	'''Module main function'''
 	global database
 	global genetic_algorithm
+	global joint_positions
 	global goal_positions
 	pygame.init()
 	random.seed()
