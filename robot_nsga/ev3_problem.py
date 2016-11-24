@@ -96,7 +96,7 @@ class EV3Problem(evolution.Problem):
 			clock.tick_busy_loop(SAMPLING_FREQ)
 		results = np.zeros(5)
 		results[0] = pygame.time.get_ticks() - start_time
-		results[1 : 4] = np.absolute(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
+		results[1 : 4] = np.asarray(self.robot.joints)
 		results[4] = np.sum(integral) / results[0]
 		# if timeout:
 		# 	total_time = float('inf')
