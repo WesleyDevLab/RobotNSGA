@@ -33,6 +33,7 @@ TIMEOUT = 10
 database = None
 genetic_algorithm = None
 goal_positions = None
+joint_positions = None
 
 class EV3Problem(evolution.Problem):
 	'''Problem class for EV3 robot'''
@@ -172,7 +173,7 @@ def test(args):
 	database = Database(args.database)
 	problem = EV3Problem(log_to_file=False)
 
-	res_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'test_set.txt'))
+	res_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'y_test.txt'))
 	goal_positions = np.loadtxt(res_path)
 
 	database.select(args.generation)
@@ -196,9 +197,11 @@ def main(args):
 	population_size = database.properties['population_size']
 	genetic_algorithm = evolution.NSGA(problem, population_size)
 
-	res_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'training_set.txt'))
+	x_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'x_train.txt'))
+	y_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'y_train.txt'))
 	batch_start = (generation % 10) * N_GOALS
-	goal_positions = np.loadtxt(res_path)[batch_start : batch_start + N_GOALS, :]
+	joint_positions = np.loadtxt(x_path)[batch_start : batch_start + N_GOALS, :]
+	goal_positions = np.loadtxt(y_path)[batch_start : batch_start + N_GOALS, :]
 
 	if generation > 0:
 		parents, children = utils.load_data(database)
