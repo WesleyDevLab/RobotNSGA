@@ -193,7 +193,7 @@ def main(args):
 	pygame.init()
 	random.seed()
 	database = utils.initialize_database(args, 'RobotTrainingData')
-	database.set_objective_names(['Tiempo', 'Error en X', 'Error en Y', 'Error en Z', 'Energía'])
+	database.set_objective_names(['Tiempo', r'Error en $\theta_1$', r'Error en $\theta_2$', r'Error en $\theta_3$', 'Energía'])
 	problem = EV3Problem()
 	generation = database.properties['highest_population']
 	population_size = database.properties['population_size']
