@@ -18,12 +18,12 @@ import utils
 from database import Database
 
 
-ARCHITECTURE = [6, 20, 50, 20, 10, 3]
+ARCHITECTURE = [6, 20, 3]
 HOME_THRESHOLD = 10
-MUTATION_PROB = 0.005
+MUTATION_PROB = 0.01
 N_GOALS = 5
 RANDOM_MU = 0
-RANDOM_SIGMA = 0.25
+RANDOM_SIGMA = 5
 SAMPLING_FREQ = 10
 SCREEN_WIDTH = 120
 SPEED_CAP = 40
@@ -47,7 +47,7 @@ class EV3Problem(evolution.Problem):
 		self.n_params = sum(self.neuron_lengths)
 		self.network = neuralnet.NeuralNetwork()
 		for i in range(len(ARCHITECTURE) - 2):
-			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1], T.nnet.nnet.relu))
+			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1], T.nnet.nnet.sigmoid))
 		self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[-2], ARCHITECTURE[-1]))
 		self.network.compile()
 		self.log_to_file = log_to_file
