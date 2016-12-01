@@ -4,6 +4,7 @@ import argparse
 
 import graph_module
 import ev3_problem
+import ik_problem
 import math_problem
 
 
@@ -54,6 +55,15 @@ def main():
 	ev3_testing.add_argument('individual', type=int, help='Number of the individual to test')
 	ev3_testing.set_defaults(
 		func=ev3_problem.test
+		)
+
+	# Inverse kinematics problem
+	ik_parser = subparsers.add_parser('ik',
+		description='Train a neural network to perform inverse kinematics',
+		help='Execute IK trining',
+		parents=[evolution_parser])
+	ik_parser.set_defaults(
+		func=ik_problem.main
 		)
 
 	# Math problem
