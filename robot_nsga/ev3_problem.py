@@ -18,7 +18,7 @@ import utils
 from database import Database
 
 
-ARCHITECTURE = [6, 20, 3]
+ARCHITECTURE = [4, 4, 4, 1]
 HOME_THRESHOLD = 10
 MUTATION_PROB = 0.01
 N_GOALS = 5
@@ -47,7 +47,7 @@ class EV3Problem(evolution.Problem):
 		self.n_params = sum(self.neuron_lengths)
 		self.network = neuralnet.NeuralNetwork()
 		for i in range(len(ARCHITECTURE) - 2):
-			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1], T.nnet.nnet.sigmoid))
+			self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[i], ARCHITECTURE[i + 1], T.tanh))
 		self.network.add_layer(neuralnet.FullyConnectedLayer(ARCHITECTURE[-2], ARCHITECTURE[-1]))
 		self.network.compile()
 		self.log_to_file = log_to_file
@@ -63,15 +63,14 @@ class EV3Problem(evolution.Problem):
 			log = print
 		self.network.set_params(chromosome)
 		clock = pygame.time.Clock()
-		inputs = np.expand_dims(np.append(goal_position, [0] * 3), axis=0)
-		last_outputs = np.zeros((1, 3))
-		integral = np.zeros((1, 3))
+		inputs = np.expand_dims(np.append(goal_position, [0] * 1), axis=0)
+		last_outputs = np.zeros((1, 1))
+		integral = np.zeros((1, 1))
 		finish = False
-		# timeout = False
 		stall_counter = 0
 		start_time = pygame.time.get_ticks()
 		while not finish:
-			inputs[0, 3:] = self.robot.read_joints()
+			inputs[0, 3] = self.robot.read_joints()[0]
 			outputs = np.clip(self.network.predict(inputs), -SPEED_CAP, SPEED_CAP)
 			for idx, speed in np.ndenumerate(outputs):
 				self.robot.set_motor(idx[1] + 1, float(speed))
@@ -83,26 +82,20 @@ class EV3Problem(evolution.Problem):
 			else:
 				stall_counter = 0
 			if stall_counter >= STALL_SECONDS * SAMPLING_FREQ:
-				# if self.robot.detect_soft_limits(outputs.flatten()).any():
-				# 	timeout = True
 				finish = True
 			# Timeout stop criterion
 			if pygame.time.get_ticks() - start_time > TIMEOUT * 1000:
-				# timeout = True
 				finish = True
 			log(str(inputs[0, 3:]) + '\t' +
 				str(np.around(outputs, 2)) + '\t' +
 				str(clock.get_rawtime()) + '\n')
 			clock.tick_busy_loop(SAMPLING_FREQ)
-		results = np.zeros(5)
+		results = np.zeros(2 + last_outputs.size)
 		results[0] = pygame.time.get_ticks() - start_time
-		results[1 : 4] = np.asarray(self.robot.joints)
-		results[4] = np.sum(integral) / results[0]
-		# if timeout:
-		# 	total_time = float('inf')
-		# error = np.linalg.norm(np.array(self.robot.direct_kinematics()) - np.array(goal_position))
+		results[1] = np.asarray(self.robot.joints)[0]
+		results[2] = np.sum(integral) / results[0]
 		log('Test finished. Total time: {}\tFinal position: ({:.2f}, {:.2f}, {:.2f})\tEnergy avg: {:.2f}'.format(
-			results[0], *self.robot.direct_kinematics(), results[4]))
+			results[0], *self.robot.direct_kinematics(), results[2]))
 		return results
 
 	def crossover(self, parent1, parent2):
