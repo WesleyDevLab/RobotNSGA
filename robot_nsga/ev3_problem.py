@@ -133,12 +133,12 @@ class EV3Problem(evolution.Problem):
 				self.robot.home()
 			self.robot.reset()
 			log('Attempted homing ' + str(attempts) + ' times.')
-			results = np.zeros((goal_positions.shape[0], 2 + goal_positions.shape[1]))
+			results = np.zeros((goal_positions.shape[0], goal_positions.shape[1]))
 			for i, goal in enumerate(np.random.permutation(goal_positions)):
 				log('\n\nGoal no. ' + str(i + 1) + ': ' + str(goal) + '\n')
 				log('Robot pos.\t\tControl signal\t\tBusy time\n' + ('-' * (SCREEN_WIDTH - 1)) + '\n')
 				results[i, :] = self.run_test(goal, individual.chromosome)
-				results[i, 1 : 1 + goal_positions.shape[1]] = np.square(results[i, 1 : 1 + goal_positions.shape[1]] - joint_positions[i, :])
+				results[i, 1 : 1 + joint_positions.shape[1]] = np.square(results[i, 1 : 1 + joint_positions.shape[1]] - joint_positions[i, :])
 				k += increment
 				if self.log_to_file:
 					p_bar.update(k)
@@ -195,8 +195,8 @@ def main(args):
 	x_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'x_train.txt'))
 	y_path = os.path.abspath(pkg_resources.resource_filename('resources.ev3', 'y_train.txt'))
 	batch_start = (generation % 10) * N_GOALS
-	joint_positions = np.loadtxt(x_path)[batch_start : batch_start + N_GOALS, 0]
-	goal_positions = np.loadtxt(y_path)[batch_start : batch_start + N_GOALS, 0]
+	joint_positions = np.expand_dims(np.loadtxt(x_path)[batch_start : batch_start + N_GOALS, 0], axis=0).T
+	goal_positions = np.loadtxt(y_path)[batch_start : batch_start + N_GOALS, :]
 
 	if generation > 0:
 		parents, children = utils.load_data(database)
