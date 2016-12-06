@@ -152,7 +152,7 @@ class EV3Problem(evolution.Problem):
 	def mutate(self, individual):
 		for i in range(len(individual.chromosome)):
 			if random.random() < MUTATION_PROB:
-				individual.chromosome[i] = random.gauss(RANDOM_MU, RANDOM_SIGMA)
+				individual.chromosome[i] += random.gauss(RANDOM_MU, RANDOM_SIGMA / 5)
 
 
 def test(args):
